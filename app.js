@@ -3,9 +3,9 @@ const mysql = require('mysql');
 
 // create connection
 const db = mysql.createConnection({
-    host : 'nusreviews-db.cwdwdifwzxfv.ap-southeast-1.rds.amazonaws.com',
-    user : 'nusreviews',
-    password: '1qw23er4'
+    host : 'localhost',
+    user : 'root',
+    password: '!qW2#eR4'
 });
 
 // connect
