@@ -1,36 +1,19 @@
-const bluebird = require('bluebird');
 const express = require('express');
-const expressSession = require('express-session');
 const mysql = require('mysql');
 
+const config = require('./config');
 const passport = require('passport');
-const FacebookStrategy = require('passport-facebook').Strategy;
-const redis = require('redis');
-bluebird.promisifyAll(redis.RedisClient.prototype);
-bluebird.promisifyAll(redis.Multi.prototype);
-const redisClient = redis.createClient();
 
-const FACEBOOK_APP_ID = redisClient.getAsync('FACEBOOK_APP_ID').then((res) => {
-    return res;
-});
-const FACEBOOK_APP_SECRET = redisClient.getAsync('FACEBOOK_APP_SECRET').then((res) => {
-    return res;
-});
+const token = require('./token');
+require('./authentication/jwt');
+require('./authentication/facebook');
 
-passport.use(new FacebookStrategy({
-    clientID: FACEBOOK_APP_ID,
-    clientSecret: FACEBOOK_APP_SECRET,
-    callbackURL: "http://api.nusreviews.com/auth/facebook/callback", 
-    profileFields: ['id', 'displayName']
-  }, 
-  function(accessToken, refreshToken, profile, done) {
-    User.findOrCreate({
-        facebookId: profile.id
-    }, function(err, user) {
-        return done(err, user);
+const generateUserToken = (req, res) => {
+    const accessToken = token.generateAccessToken(req.user.id);
+    res.json({
+        token: accessToken
     });
-  }
-));
+}
 
 // create connection
 const db = mysql.createConnection({
@@ -49,16 +32,13 @@ db.connect((err) => {
 });
 
 const app = express();
-app.use(expressSession({ 
-    secret: '$rE3@wQ1', 
-    resave: false, 
-    saveUninitialized: true,
-    cookie: {
-        secure: true
-    }
-}));
 app.use(passport.initialize());
-app.use(passport.session());
+
+app.get('/auth/facebook', 
+    passport.authenticate('facebook', { session: false }));
+
+app.get('/auth/facebook/callback', 
+    passport.authenticate('facebook', { session: false }), generateUserToken);
 
 app.get('/', (req, res) => {
     res.json({
@@ -66,20 +46,12 @@ app.get('/', (req, res) => {
     });
 });
 
-app.get('/profile', (req, res) => {
-    res.json({
-        user: req.user
-    });
+app.get('/profile', passport.authenticate(['jwt'], { session: false }), (req, res) => {
+    res.json(req.user);
 });
 
-app.get('/auth/facebook', passport.authenticate('facebook'));
-
-app.get('/auth/facebook/callback', 
-    passport.authenticate('facebook', { 
-        successRedirect: '/', 
-        failureRedirect: '/' 
-    })
-);
+const port = config.get('http.port');
+const ip = config.get('http.ip');
 
 app.listen('3000', '127.0.0.1', ()=>{
     console.log('Server started on port 3000');
