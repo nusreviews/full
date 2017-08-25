@@ -9,7 +9,7 @@ bluebird.promisifyAll(redis.Multi.prototype);
 const redisClient = redis.createClient();
 
 const jwtOptions = {
-    jwtFromRequest: passportJwt.ExtractJwt.fromAuthHeader(),
+    jwtFromRequest: passportJwt.ExtractJwt.fromHeader('authorization'),
     secretOrKey: config.get('authentication.token.secret'),
     issuer: config.get('authentication.token.issuer'),
     audience: config.get('authentication.token.audience')
