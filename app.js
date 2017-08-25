@@ -21,7 +21,7 @@ passport.use(new FacebookStrategy({
     clientID: FACEBOOK_APP_ID,
     clientSecret: FACEBOOK_APP_SECRET,
     callbackURL: "http://api.nusreviews.com/auth/facebook/callback", 
-    profileFields: ['id', 'displayName'g]
+    profileFields: ['id', 'displayName']
   }, 
   function(accessToken, refreshToken, profile, done) {
     User.findOrCreate({
