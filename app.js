@@ -21,7 +21,7 @@ passport.use(new FacebookStrategy({
     clientID: FACEBOOK_APP_ID,
     clientSecret: FACEBOOK_APP_SECRET,
     callbackURL: "http://api.nusreviews.com/auth/facebook/callback", 
-    profileFields: ['id', 'displayName']
+    profileFields: ['id', 'displayName'g]
   }, 
   function(accessToken, refreshToken, profile, done) {
     User.findOrCreate({
@@ -76,7 +76,7 @@ app.get('/auth/facebook/callback',
     })
 );
 
-app.listen('3000', ()=>{
+app.listen('3000', '127.0.0.1', ()=>{
     console.log('Server started on port 3000');
 });
 
