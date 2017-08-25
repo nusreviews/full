@@ -50,7 +50,12 @@ db.connect((err) => {
 
 const app = express();
 app.use(expressSession({ 
-    secret: '$rE3@wQ1'
+    secret: '$rE3@wQ1', 
+    resave: false, 
+    saveUninitialized: true,
+    cookie: {
+        secure: true
+    }
 }));
 app.use(passport.initialize());
 app.use(passport.session());
