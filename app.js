@@ -80,7 +80,7 @@ app.get('/getModule/:id', (req, res) =>{
 
 // get module percentage
 app.get('/getModulePercentage/:id', (req, res) =>{
-    let sql = `SELECT floor(count(*)/(SELECT count(*) FROM review where modId = "${req.params.id}") * 100) AS percent FROM review where modId = "CS1010" and recommend = true`;
+    let sql = `SELECT floor(count(*)/(SELECT count(*) FROM review where modId = "${req.params.id}") * 100) AS percent FROM review where modId = "${req.params.id}" and recommend = true`;
     db.query(sql, (err, result)=>{
         if(err){
             throw err;
