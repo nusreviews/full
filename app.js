@@ -1,51 +1,45 @@
 const express = require('express');
-const mysql = require('mysql');
-
 const config = require('./config');
-const passport = require('passport');
+const db = require('./db');
 
-const token = require('./token');
-require('./authentication/jwt');
-require('./authentication/facebook');
+/*************************** Associations ********************************** */
+const Module = require('./models/module');
+const Professor = require('./models/professor');
+const Review = require('./models/review');
+const User = require('./models/user');
 
-const generateUserToken = (req, res) => {
-    const accessToken = token.generateAccessToken(req.user.id);
-    res.json({
-        token: accessToken
-    });
-}
-
-// create connection
-const db = mysql.createConnection({
-    host : 'localhost',
-    user : 'root',
-    password: '!qW2#eR4'
-    //password: 'limtaeu'
+Module.hasMany(Review, {
+    as: 'Reviews',
+    foreignKey: 'modId',
+    sourceKey: 'modId'
 });
 
-// connect
-db.connect((err) => {
-    if(err){
-        throw err;
-    } else {
-        console.log('MySQL Connected');
-        let sql = 'use nusreviews';
-        db.query(sql, (err, result)=>{
-            if(err){
-                throw err;
-            } 
-        });
-    }
+Professor.hasMany(Review, {
+    as: 'Reviews',
+    foreignKey: 'taughtBy',
+    sourceKey: 'profId'
 });
+
+Review.belongsTo(Module, {
+    foreignKey: 'modId'
+});
+Review.belongsTo(Professor, {
+    foreignKey: 'taughtBy',
+    targetKey: 'reviewId'
+});
+Review.belongsTo(User, {
+    foreignKey: 'reviewBy',
+    targetKey: 'userId'
+});
+
+User.hasMany(Review, {
+    as: 'Reviews',
+    foreignKey: 'reviewBy',
+    sourceKey: 'userId'
+});
+
 
 const app = express();
-app.use(passport.initialize());
-
-app.get('/auth/facebook', 
-    passport.authenticate('facebook', { session: false }));
-
-app.get('/auth/facebook/callback', 
-    passport.authenticate('facebook', { session: false }), generateUserToken);
 
 app.get('/', (req, res) => {
     res.json({
@@ -160,3 +154,22 @@ app.listen('3000', '127.0.0.1', ()=>{
     console.log('Server started on port 3000');
 });
 
+/*
+app.use(passport.initialize());
+
+app.get('/auth/facebook', 
+    passport.authenticate('facebook', { session: false }));
+
+app.get('/auth/facebook/callback', 
+    passport.authenticate('facebook', { session: false }), generateUserToken);
+*/
+
+
+/*
+const generateUserToken = (req, res) => {
+    const accessToken = token.generateAccessToken(req.user.id);
+    res.json({
+        token: accessToken
+    });
+}
+*/
