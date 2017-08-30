@@ -54,17 +54,20 @@ app.get('/', (req, res) => {
     
 });
 
-/****************************** Module ************************************* */
-
-// get all modules
-app.get('/getAllModule', (req, res) =>{
-    let sql = 'select * from module';
+function querySql(sql, callback) {
     db.query(sql, (err, result)=>{
         if(err){
             throw err;
         } 
-        res.send(result);
-    });
+        callback(result);
+    })
+}
+
+/****************************** Module ************************************* */
+// get all modules
+app.get('/getAllModule', (req, res) =>{
+    let sql = 'select * from module';
+    querySql(sql, (result) =>{res.send(result);});
 });
 
 // get specific module
@@ -92,13 +95,19 @@ app.get('/getModulePercentage/:id', (req, res) =>{
 // get latest review date of module
 app.get('/getLatestReviewDate/:id', (req, res) =>{
         let sql = `SELECT * FROM review where modId = "${req.params.id}" group by modId ORDER BY reviewDate DESC`;
+        
+        res.send(test(sql));
+        /*
         db.query(sql, (err, result)=>{
             if(err){
                 throw err;
             } 
             res.send(result);
         });
+        */
 });
+
+
 
 /****************************** Professor ************************************* */
 
