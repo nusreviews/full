@@ -20,18 +20,6 @@ Professor.hasMany(Review, {
     sourceKey: 'profId'
 });
 
-Review.belongsTo(Module, {
-    foreignKey: 'modId'
-});
-Review.belongsTo(Professor, {
-    foreignKey: 'taughtBy',
-    targetKey: 'reviewId'
-});
-Review.belongsTo(User, {
-    foreignKey: 'reviewBy',
-    targetKey: 'userId'
-});
-
 User.hasMany(Review, {
     as: 'Reviews',
     foreignKey: 'reviewBy',
