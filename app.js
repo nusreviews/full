@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
 /****************************** Module ************************************* */
 
 // get all modules
-app.get('/getAllModule', (req, res) => {
+app.get('/getModules', (req, res) => {
     Module.findAll().then((rawModules) => {
         let modules = rawModules.map((rawModule) => {
             return rawModule.dataValues;
@@ -117,7 +117,7 @@ app.get('/getLatestReviewDate/:id', (req, res) =>{
 
 /*
 // get All Professor
-app.get('/getAllProfessor', (req, res) =>{
+app.get('/getProfessors', (req, res) =>{
     let sql = "select * from professor";
     db.query(sql, (err, result)=>{
         if(err){
@@ -151,6 +151,17 @@ app.get('/insertReview/:id/:reviewBy/:taughtBy/:teaching/:difficulty/:enjoyabili
             throw err;
         } 
         res.send("insert succesful");
+    });
+});
+
+// get reviews card of user
+app.get('/getReviewsOfUser/:id', (req, res) =>{
+    let sql = `select * from review, user where user.userId = ${req.params.id} and review.reviewBy = user.userId`;
+    db.query(sql, (err, result)=>{
+        if(err){
+            throw err;
+        } 
+        res.send(result);
     });
 });
 */
