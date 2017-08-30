@@ -50,7 +50,7 @@ app.get('/getAllModule', (req, res) => {
 
 // get specific module
 app.get('/getModule/:id', (req, res) =>{
-    Modules.findOne({ 
+    Module.findOne({ 
         where: {
             modId: req.params.id
         }
@@ -60,18 +60,38 @@ app.get('/getModule/:id', (req, res) =>{
 });
 
 // get module percentage
-app.get('/getModulePercentage/:id', (req, res) =>{
-    let sql = `SELECT floor(count(*)/(SELECT count(*) FROM review where modId = "${req.params.id}") * 100) AS percent FROM review where modId = "CS1010" and recommend = true`;
-    db.query(sql, (err, result)=>{
-        if(err){
-            throw err;
-        } 
-        res.send(result);
+app.get('/getModulePercentage/:id', (req, res) => {
+
+    let reviewCountPromise = Review.count({
+        where: {
+            modId: req.params.id
+        }
+    }).then((reviewCount) => {
+        return reviewCount;
+    });
+
+    let recommendReviewCountPromise = Review.count({
+        where: {
+            modId: req.params.id,
+            recommend: true
+        }
+    }).then((recommendReviewCount) => {
+        return recommendReviewCount;
+    });
+
+    let queryPromises = [reviewCountPromise, recommendReviewCountPromise];
+    Promise.all(queryPromises).then((queryCounts) => {
+        let reviewCount = queryCounts[0];
+        let recommendReviewCount = queryCounts[1];
+        res.json({
+            percent: (recommendReviewCount / reviewCount) * 100
+        });
     });
 });
-
+/*
 // get reviews of module
-app.get('/getReview/:id', (req, res) =>{
+app.get('/getReview/:id', (req, res) => {
+
     let sql = `select * from review where review.modId = "${req.params.id}"`;
     db.query(sql, (err, result)=>{
         if(err){
@@ -91,7 +111,7 @@ app.get('/getLatestReviewDate/:id', (req, res) =>{
             res.send(result);
         });
 });
-
+*/
 
 /****************************** Professor ************************************* */
 
