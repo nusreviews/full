@@ -5,8 +5,8 @@ const config = require('./config');
 const passport = require('passport');
 
 const token = require('./token');
-require('./authentication/jwt');
-require('./authentication/facebook');
+//require('./authentication/jwt');
+//require('./authentication/facebook');
 
 const generateUserToken = (req, res) => {
     const accessToken = token.generateAccessToken(req.user.id);
@@ -19,8 +19,8 @@ const generateUserToken = (req, res) => {
 const db = mysql.createConnection({
     host : 'localhost',
     user : 'root',
-    password: '!qW2#eR4'
-    //password: 'limtaeu'
+    //password: '!qW2#eR4'
+    password: 'limtaeu'
 });
 
 // connect
@@ -68,20 +68,20 @@ app.get('/getModules', (req, res) =>{
 });
 
 // get specific module
-app.get('/getModule/:id', (req, res) =>{
-    let sql = `select * from module where modId = "${req.params.id}"`;
+app.get('/getModule/:modId', (req, res) =>{
+    let sql = `select * from module where modId = "${req.params.modId}"`;
     querySql(sql, (result) =>{res.send(result);});
 });
 
 // get module percentage
-app.get('/getModulePercentage/:id', (req, res) =>{
-    let sql = `SELECT floor(count(*)/(SELECT count(*) FROM review where modId = "${req.params.id}") * 100) AS percent FROM review where modId = "${req.params.id}" and recommend = true`;
+app.get('/getModulePercentage/:modId', (req, res) =>{
+    let sql = `SELECT floor(count(*)/(SELECT count(*) FROM review where modId = "${req.params.modId}") * 100) AS percent FROM review where modId = "${req.params.modId}" and recommend = true`;
     querySql(sql, (result) =>{res.send(result);});
 });
 
 // get latest review date of module
-app.get('/getLatestReviewDate/:id', (req, res) =>{
-    let sql = `SELECT * FROM review where modId = "${req.params.id}" group by modId ORDER BY reviewDate DESC`;
+app.get('/getLatestReviewDate/:modId', (req, res) =>{
+    let sql = `SELECT * FROM review where modId = "${req.params.modId}" group by modId ORDER BY reviewDate DESC`;
     querySql(sql, (result) =>{res.send(result);});
 });
 
@@ -94,35 +94,35 @@ app.get('/getProfessors', (req, res) =>{
 });
 
 // get a prof
-app.get('/getProfessor/:id', (req, res) =>{
-    let sql = `select * from professor where profId = "${req.params.id}"`;
+app.get('/getProfessor/:profId', (req, res) =>{
+    let sql = `select * from professor where profId = "${req.params.profId}"`;
     querySql(sql, (result) =>{res.send(result);});
 });
 
 /****************************** Review ************************************* */
 
 // get likes of a review
-app.get('/getLikes/:id', (req, res) =>{
-    let sql = `select likes from review where reviewId = "${req.params.id}"`;
+app.get('/getLikes/:reviewId', (req, res) =>{
+    let sql = `select count(*) as amount from user, review, liked where user.userId = liked.userId and review.reviewId = liked.reviewId and liked.reviewId = ${req.params.reviewId}`;
     querySql(sql, (result) =>{res.send(result);});
 });
 
 // get reviews of module
-app.get('/getReview/:id', (req, res) =>{
-    let sql = `select * from review where review.modId = "${req.params.id}"`;
+app.get('/getReview/:modId', (req, res) =>{
+    let sql = `select * from review where review.modId = "${req.params.modId}"`;
     querySql(sql, (result) =>{res.send(result);});
 });
 
 // get reviews card of user
-app.get('/getReviewsOfUser/:id', (req, res) =>{
-    let sql = `select * from review, user where user.userId = ${req.params.id} and review.reviewBy = user.userId`;
+app.get('/getReviewsOfUser/:userId', (req, res) =>{
+    let sql = `select * from review, user where user.userId = ${req.params.userId} and review.reviewBy = user.userId`;
     querySql(sql, (result) =>{res.send(result);});
 });
 
 // insert review
-app.get('/insertReview/:id/:reviewBy/:taughtBy/:teaching/:difficulty/:enjoyability/:workload/:recommend/:comments', (req, res) =>{
+app.get('/insertReview/:modId/:reviewBy/:taughtBy/:teaching/:difficulty/:enjoyability/:workload/:recommend/:comments', (req, res) =>{
     let sql = `insert into review (modId, reviewBy, taughtBy, teaching, difficulty, enjoyability, workload, recommend, comments) 
-    values ("${req.params.id}", ${req.params.reviewBy}, ${req.params.taughtBy}, ${req.params.teaching}, ${req.params.difficulty}, ${req.params.enjoyability}, ${req.params.workload}, ${req.params.recommend}, "${req.params.comments}")`;
+    values ("${req.params.modId}", ${req.params.reviewBy}, ${req.params.taughtBy}, ${req.params.teaching}, ${req.params.difficulty}, ${req.params.enjoyability}, ${req.params.workload}, ${req.params.recommend}, "${req.params.comments}")`;
     querySql(sql, (result) =>{res.send(result);});
 });
 

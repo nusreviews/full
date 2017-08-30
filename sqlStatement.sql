@@ -25,6 +25,12 @@ create table review(reviewId int not null AUTO_INCREMENT,
                     foreign key(reviewBy) references user(userId), 
                     foreign key(taughtBy) references professor(profId));
 
+create table liked(reviewId int not null,
+                    userId int not null,
+                    primary key(reviewId, userId),
+                    foreign key(userId) references user(userId),
+                    foreign key(reviewId) references review(reviewId));
+
 CREATE TRIGGER Ucase_insert_module BEFORE INSERT ON module FOR EACH ROW
 SET NEW.modId = UPPER(NEW.modId);
 
@@ -124,10 +130,15 @@ select * from review where modId = "cs4100";
 select * from module where modId = "cs1010";
 
 # like a review
-update review set likes = likes + 1, where reviewId = 1;
+update review set likes = likes + 1 where reviewId = 1;
 
 # get list of prof
 select * from professor;
 select * from professor where profId = 1;
 
+insert into liked(reviewId, userId) values(1, 1);
+insert into liked(reviewId, userId) values(1, 2);
+insert into liked(reviewId, userId) values(1, 3);
 
+# number of likes of a review
+select count(*) as amount from user, review, liked where user.userId = liked.userId and review.reviewId = liked.reviewId and liked.reviewId = 1;
