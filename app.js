@@ -5,8 +5,8 @@ const config = require('./config');
 const passport = require('passport');
 
 const token = require('./token');
-//require('./authentication/jwt');
-//require('./authentication/facebook');
+require('./authentication/jwt');
+require('./authentication/facebook');
 
 const generateUserToken = (req, res) => {
     const accessToken = token.generateAccessToken(req.user.id);
@@ -19,8 +19,8 @@ const generateUserToken = (req, res) => {
 const db = mysql.createConnection({
     host : 'localhost',
     user : 'root',
-    //password: '!qW2#eR4'
-    password: 'limtaeu'
+    password: '!qW2#eR4'
+    //password: 'limtaeu'
 });
 
 // connect
