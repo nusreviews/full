@@ -30,11 +30,7 @@ db.connect((err) => {
     } else {
         console.log('MySQL Connected');
         let sql = 'use nusreviews';
-        db.query(sql, (err, result)=>{
-            if(err){
-                throw err;
-            } 
-        });
+        querySql(sql, (result)=>{});
     }
 });
 
@@ -54,6 +50,7 @@ app.get('/', (req, res) => {
     
 });
 
+// sql query
 function querySql(sql, callback) {
     db.query(sql, (err, result)=>{
         if(err){
@@ -73,118 +70,63 @@ app.get('/getAllModule', (req, res) =>{
 // get specific module
 app.get('/getModule/:id', (req, res) =>{
     let sql = `select * from module where modId = "${req.params.id}"`;
-    db.query(sql, (err, result)=>{
-        if(err){
-            throw err;
-        } 
-        res.send(result);
-    });
+    querySql(sql, (result) =>{res.send(result);});
 });
 
 // get module percentage
 app.get('/getModulePercentage/:id', (req, res) =>{
     let sql = `SELECT floor(count(*)/(SELECT count(*) FROM review where modId = "${req.params.id}") * 100) AS percent FROM review where modId = "${req.params.id}" and recommend = true`;
-    db.query(sql, (err, result)=>{
-        if(err){
-            throw err;
-        } 
-        res.send(result);
-    });
+    querySql(sql, (result) =>{res.send(result);});
 });
 
 // get latest review date of module
 app.get('/getLatestReviewDate/:id', (req, res) =>{
-        let sql = `SELECT * FROM review where modId = "${req.params.id}" group by modId ORDER BY reviewDate DESC`;
-        
-        res.send(test(sql));
-        /*
-        db.query(sql, (err, result)=>{
-            if(err){
-                throw err;
-            } 
-            res.send(result);
-        });
-        */
+    let sql = `SELECT * FROM review where modId = "${req.params.id}" group by modId ORDER BY reviewDate DESC`;
+    querySql(sql, (result) =>{res.send(result);});
 });
-
-
 
 /****************************** Professor ************************************* */
 
 // get All Professor
 app.get('/getAllProfessor', (req, res) =>{
     let sql = "select * from professor";
-    db.query(sql, (err, result)=>{
-        if(err){
-            throw err;
-        } 
-        res.send(result);
-    });
+    querySql(sql, (result) =>{res.send(result);});
 });
 
 // get a prof
 app.get('/getProfessor/:id', (req, res) =>{
     let sql = `select * from professor where profId = "${req.params.id}"`;
-    db.query(sql, (err, result)=>{
-        if(err){
-            throw err;
-        } 
-        res.send(result);
-    });
+    querySql(sql, (result) =>{res.send(result);});
 });
 
 /****************************** Review ************************************* */
 
-
 // get like
 app.get('/getLikes/:id', (req, res) =>{
     let sql = `select likes from review where reviewId = "${req.params.id}"`;
-    db.query(sql, (err, result)=>{
-        if(err){
-            throw err;
-        } 
-        res.send(result);
-    });
+    querySql(sql, (result) =>{res.send(result);});
 });
 
 // get reviews of module
 app.get('/getReview/:id', (req, res) =>{
     let sql = `select * from review where review.modId = "${req.params.id}"`;
-    db.query(sql, (err, result)=>{
-        if(err){
-            throw err;
-        } 
-        res.send(result);
-    });
+    querySql(sql, (result) =>{res.send(result);});
 });
 
 // get reviews card of user
 app.get('/getReviewsOfUser/:id', (req, res) =>{
     let sql = `select * from review, user where user.userId = ${req.params.id} and review.reviewBy = user.userId`;
-    db.query(sql, (err, result)=>{
-        if(err){
-            throw err;
-        } 
-        res.send(result);
-    });
+    querySql(sql, (result) =>{res.send(result);});
 });
 
 // insert review
 app.get('/insertReview/:id/:reviewBy/:taughtBy/:teaching/:difficulty/:enjoyability/:workload/:recommend/:comments', (req, res) =>{
     let sql = `insert into review (modId, reviewBy, taughtBy, teaching, difficulty, enjoyability, workload, recommend, comments) 
     values ("${req.params.id}", ${req.params.reviewBy}, ${req.params.taughtBy}, ${req.params.teaching}, ${req.params.difficulty}, ${req.params.enjoyability}, ${req.params.workload}, ${req.params.recommend}, "${req.params.comments}")`;
-    db.query(sql, (err, result)=>{
-        if(err){
-            throw err;
-        } 
-        res.send("insert succesful");
-    });
+    querySql(sql, (result) =>{res.send(result);});
 });
 
 /****************************** Specific function ************************************* */
-
-
-
 
 app.get('/profile', passport.authenticate(['jwt'], { session: false }), (req, res) => {
     res.json(req.user);
