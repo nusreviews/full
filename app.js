@@ -5,8 +5,8 @@ const config = require('./config');
 const passport = require('passport');
 
 const token = require('./token');
-//require('./authentication/jwt');
-//require('./authentication/facebook');
+require('./authentication/jwt');
+require('./authentication/facebook');
 
 const generateUserToken = (req, res) => {
     const accessToken = token.generateAccessToken(req.user.id);
@@ -19,8 +19,8 @@ const generateUserToken = (req, res) => {
 const db = mysql.createConnection({
     host : 'localhost',
     user : 'root',
-    //password: '!qW2#eR4'
-    password: 'limtaeu'
+    password: '!qW2#eR4'
+    //password: 'limtaeu'
 });
 
 // connect
@@ -62,7 +62,7 @@ function querySql(sql, callback) {
 
 /****************************** Module ************************************* */
 // get all modules
-app.get('/getAllModule', (req, res) =>{
+app.get('/getModules', (req, res) =>{
     let sql = 'select * from module';
     querySql(sql, (result) =>{res.send(result);});
 });
@@ -88,7 +88,7 @@ app.get('/getLatestReviewDate/:id', (req, res) =>{
 /****************************** Professor ************************************* */
 
 // get All Professor
-app.get('/getAllProfessor', (req, res) =>{
+app.get('/getProfessors', (req, res) =>{
     let sql = "select * from professor";
     querySql(sql, (result) =>{res.send(result);});
 });
@@ -101,7 +101,7 @@ app.get('/getProfessor/:id', (req, res) =>{
 
 /****************************** Review ************************************* */
 
-// get like
+// get likes of a review
 app.get('/getLikes/:id', (req, res) =>{
     let sql = `select likes from review where reviewId = "${req.params.id}"`;
     querySql(sql, (result) =>{res.send(result);});

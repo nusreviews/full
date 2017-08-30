@@ -123,6 +123,9 @@ select * from review where modId = "cs4100";
 # add review
 select * from module where modId = "cs1010";
 
+# like a review
+update review set likes = likes + 1, where reviewId = 1;
+
 # get list of prof
 select * from professor;
 select * from professor where profId = 1;
