@@ -5,8 +5,8 @@ const config = require('./config');
 const passport = require('passport');
 
 const token = require('./token');
-require('./authentication/jwt');
-require('./authentication/facebook');
+//require('./authentication/jwt');
+//require('./authentication/facebook');
 
 const generateUserToken = (req, res) => {
     const accessToken = token.generateAccessToken(req.user.id);
@@ -19,8 +19,8 @@ const generateUserToken = (req, res) => {
 const db = mysql.createConnection({
     host : 'localhost',
     user : 'root',
-    password: '!qW2#eR4'
-    //password: 'limtaeu'
+    //password: '!qW2#eR4'
+    password: 'limtaeu'
 });
 
 // connect
@@ -89,17 +89,6 @@ app.get('/getModulePercentage/:id', (req, res) =>{
     });
 });
 
-// get reviews of module
-app.get('/getReview/:id', (req, res) =>{
-    let sql = `select * from review where review.modId = "${req.params.id}"`;
-    db.query(sql, (err, result)=>{
-        if(err){
-            throw err;
-        } 
-        res.send(result);
-    });
-});
-
 // get latest review date of module
 app.get('/getLatestReviewDate/:id', (req, res) =>{
         let sql = `SELECT * FROM review where modId = "${req.params.id}" group by modId ORDER BY reviewDate DESC`;
@@ -137,6 +126,40 @@ app.get('/getProfessor/:id', (req, res) =>{
 
 /****************************** Review ************************************* */
 
+
+// get like
+app.get('/getLikes/:id', (req, res) =>{
+    let sql = `select likes from review where reviewId = "${req.params.id}"`;
+    db.query(sql, (err, result)=>{
+        if(err){
+            throw err;
+        } 
+        res.send(result);
+    });
+});
+
+// get reviews of module
+app.get('/getReview/:id', (req, res) =>{
+    let sql = `select * from review where review.modId = "${req.params.id}"`;
+    db.query(sql, (err, result)=>{
+        if(err){
+            throw err;
+        } 
+        res.send(result);
+    });
+});
+
+// get reviews card of user
+app.get('/getReviewsOfUser/:id', (req, res) =>{
+    let sql = `select * from review, user where user.userId = ${req.params.id} and review.reviewBy = user.userId`;
+    db.query(sql, (err, result)=>{
+        if(err){
+            throw err;
+        } 
+        res.send(result);
+    });
+});
+
 // insert review
 app.get('/insertReview/:id/:reviewBy/:taughtBy/:teaching/:difficulty/:enjoyability/:workload/:recommend/:comments', (req, res) =>{
     let sql = `insert into review (modId, reviewBy, taughtBy, teaching, difficulty, enjoyability, workload, recommend, comments) 
@@ -148,6 +171,11 @@ app.get('/insertReview/:id/:reviewBy/:taughtBy/:teaching/:difficulty/:enjoyabili
         res.send("insert succesful");
     });
 });
+
+/****************************** Specific function ************************************* */
+
+
+
 
 app.get('/profile', passport.authenticate(['jwt'], { session: false }), (req, res) => {
     res.json(req.user);

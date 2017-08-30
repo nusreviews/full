@@ -17,6 +17,7 @@ create table review(reviewId int not null AUTO_INCREMENT,
                     enjoyability int, 
                     workload int, 
                     recommend boolean,
+                    likes int default 0,
                     comments varchar(20000),
                     reviewDate timestamp default current_timestamp, 
                     primary key(reviewId), 
@@ -114,7 +115,7 @@ SELECT * FROM review where modId = "CS1010" group by modId ORDER BY reviewDate D
 SELECT floor(count(*)/(SELECT count(*) FROM review where modId = "CS1010") * 100) AS percent FROM review where modId = "CS1010" and recommend = true; 
 
 # review card of a user
-select * from review, user where review.reviewId = user.userId;
+select * from review, user where user.userId = 2 and review.reviewBy = user.userId;
 
 # review card of a module
 select * from review where modId = "cs4100";
