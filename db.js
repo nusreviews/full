@@ -1,6 +1,6 @@
 const config = require('./config');
 
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const Sequelize = require('sequelize');
 
 // Create the connection
