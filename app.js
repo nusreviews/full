@@ -37,26 +37,25 @@ app.get('/', (req, res) => {
 });
 
 /****************************** Module ************************************* */
-/*
+
 // get all modules
-app.get('/getAllModule', (req, res) =>{
-    let sql = 'select * from module';
-    db.query(sql, (err, result)=>{
-        if(err){
-            throw err;
-        } 
-        res.send(result);
+app.get('/getAllModule', (req, res) => {
+    Module.findAll().then((rawModules) => {
+        let modules = rawModules.map((rawModule) => {
+            return rawModule.dataValues;
+        });
+        res.json(modules);
     });
 });
 
 // get specific module
 app.get('/getModule/:id', (req, res) =>{
-    let sql = `select * from module where modId = "${req.params.id}"`;
-    db.query(sql, (err, result)=>{
-        if(err){
-            throw err;
-        } 
-        res.send(result);
+    Modules.findOne({ 
+        where: {
+            modId: req.params.id
+        }
+    }).then((module) => {
+        res.json(module.dataValues);
     });
 });
 
@@ -92,7 +91,7 @@ app.get('/getLatestReviewDate/:id', (req, res) =>{
             res.send(result);
         });
 });
-*/
+
 
 /****************************** Professor ************************************* */
 
