@@ -49,7 +49,7 @@ app.get('/', (req, res) => {
 });
 
 /****************************** Module ************************************* */
-
+/*
 // get all modules
 app.get('/getAllModule', (req, res) =>{
     let sql = 'select * from module';
@@ -104,9 +104,11 @@ app.get('/getLatestReviewDate/:id', (req, res) =>{
             res.send(result);
         });
 });
+*/
 
 /****************************** Professor ************************************* */
 
+/*
 // get All Professor
 app.get('/getAllProfessor', (req, res) =>{
     let sql = "select * from professor";
@@ -128,9 +130,11 @@ app.get('/getProfessor/:id', (req, res) =>{
         res.send(result);
     });
 });
+*/
 
 /****************************** Review ************************************* */
 
+/*
 // insert review
 app.get('/insertReview/:id/:reviewBy/:taughtBy/:teaching/:difficulty/:enjoyability/:workload/:recommend/:comments', (req, res) =>{
     let sql = `insert into review (modId, reviewBy, taughtBy, teaching, difficulty, enjoyability, workload, recommend, comments) 
@@ -142,10 +146,7 @@ app.get('/insertReview/:id/:reviewBy/:taughtBy/:teaching/:difficulty/:enjoyabili
         res.send("insert succesful");
     });
 });
-
-app.get('/profile', passport.authenticate(['jwt'], { session: false }), (req, res) => {
-    res.json(req.user);
-});
+*/
 
 const port = config.get('http.port');
 const ip = config.get('http.ip');
@@ -173,3 +174,12 @@ const generateUserToken = (req, res) => {
     });
 }
 */
+
+/*
+app.get('/profile', passport.authenticate(['jwt'], { session: false }), (req, res) => {
+    res.json(req.user);
+});
+*/
+
+
+
