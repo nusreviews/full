@@ -98,7 +98,7 @@ const reviewSeed = [
         recommend: true,
         comments: "hi 3"
     }, {
-        modId: 'CS4100',
+        modId: 'CS2100',
         reviewBy: 3,
         taughtBy: 3,
         teaching: 1,
