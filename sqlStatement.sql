@@ -81,10 +81,6 @@ insert into professor(lastName, firstName) values ("Janice", "Lee");
 insert into professor(lastName, firstName) values ("Leong", "Wai Kay");
 insert into professor(lastName, firstName) values ("Low", "Kok Lim");
 
-insert into liked(reviewId, userId) values(1, 1);
-insert into liked(reviewId, userId) values(1, 2);
-insert into liked(reviewId, userId) values(1, 3);
-
 insert into review (modId, reviewBy, taughtBy, teaching, difficulty, enjoyability, workload, recommend, comments) 
             values ("CS1010", 2, 1, 5, 4, 3, 2, true, "hi");
 
@@ -114,6 +110,10 @@ insert into review (modId, reviewBy, taughtBy, teaching, difficulty, enjoyabilit
 
 insert into review (modId, reviewBy, taughtBy, teaching, difficulty, enjoyability, workload, recommend, comments) 
             values ("cs4100", 3, 3, 1, 1, 1, 1, true, "hi 3");
+
+insert into liked(reviewId, userId) values(1, 1);
+insert into liked(reviewId, userId) values(1, 2);
+insert into liked(reviewId, userId) values(1, 3);
 
 # list of modules
 select modId, name from module;
