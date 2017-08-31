@@ -95,5 +95,9 @@ Promise.all(syncModels).then(() => {
                 throw err;
             });
         }
+    }).catch((err) => {
+        console.error(err);
     });
+}).catch((err) => {
+    console.error(err);
 });
