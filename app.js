@@ -157,7 +157,7 @@ let sql_getModuleFull = 'select module.modId, name, description, percentageTable
 // get all modules with full attribute
 app.get('/getModulesFullAttribute', (req, res) =>{
     let testSql = 'SELECT modId, date(dateUpdated) as test FROM review  group by modId ORDER BY dateUpdated DESC ;';
-    querySql(testSql, (result) =>{
+    querySql(sql_getModuleFull, (result) =>{
         res.send(result);
         console.log(result);
     });
