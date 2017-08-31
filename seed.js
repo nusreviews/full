@@ -49,47 +49,36 @@ const userSeed = require('./seed/user_seed');
 
 // Order is important here
 db.sequelize.dropAllSchemas().then(() => {
-    let syncModels = [
+    return Promise.all([
         Module.sync(),
         Professor.sync(),
         User.sync()
-    ];
-
-    Promise.all(syncModels).then(() => {
-        Review.sync().then(() => {
-            Like.sync().then(() => {
-                for (module of moduleSeed) {
-                    Module.create(module).catch((err) => {
-                        throw err;
-                    });
-                }
-                for (professor of professorSeed) {
-                    Professor.create(professor).catch((err) => {
-                        throw err;
-                    });
-                }
-                for (user of userSeed) {
-                    User.create(user).catch((err) => {
-                        throw err;
-                    });
-                }
-                for (review of reviewSeed) {
-                    Review.create(review).catch((err) => {
-                        throw err;
-                    });
-                }
-                for (like of likeSeed) {
-                    Like.create(like).catch((err) => {
-                        throw err;
-                    });
-                }
-            }).catch((err) => {
-                console.error(err);
-            });
-        }).catch((err) => {
-            console.error(err);
-        });
-    }).catch((err) => {
-        console.error(err);
-    });
+    ]);
+}).then(() => {
+    return Reviews.sync();
+}).then(() => {
+    return Like.sync();
+}).then(() => {
+    return Promise.all(moduleSeed.map((module) => {
+        return Module.create(module);
+    }));
+}).then(() => {
+    return Promise.all(professorSeed.map((professor) => {
+        return Professor.create(professor);
+    }));
+}).then(() => {
+    return Promise.all(userSeed.map((user) => {
+        return User.create(user);
+    }));
+}).then(() => {
+    return Promise.all(reviewSeed.map((review) => {
+        return Review.create(review);
+    }));
+}).then(() => {
+    return Promise.all(likeSeed.map((like) => {
+        return Like.create(like);
+    }));
+}).catch((err) => {
+    console.error(err);
 });
+
