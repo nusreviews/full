@@ -66,27 +66,27 @@ const userSeed = require('./seed/user_seed');
 
 for (module of moduleSeed) {
     Module.create(module).catch((err) => {
-        throw new err;
+        throw err;
     });
 }
 for (user of userSeed) {
     User.create(user).catch((err) => {
-        throw new err;
+        throw err;
     });
 }
 for (professor of professorSeed) {
     Professor.create(professor).catch((err) => {
-        throw new err;
+        throw err;
     });
 }
 for (review of reviewSeed) {
     Review.create(review).catch((err) => {
-        throw new err;
+        throw err;
     });
 }
 for (like of likeSeed) {
     Like.create(like).catch((err) => {
-        throw new err;
+        throw err;
     });
 }
 
