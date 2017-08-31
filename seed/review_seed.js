@@ -66,7 +66,7 @@ const reviewSeed = [
         comments: "hi 3"
     },
     {
-        modId: 'CS2020',
+        modId: 'CS2030',
         reviewBy: 2,
         taughtBy: 3,
         teaching: 5,
@@ -77,7 +77,7 @@ const reviewSeed = [
         comments: "hi"
     },
     {
-        modId: 'CS2020',
+        modId: 'CS2030',
         reviewBy: 3,
         taughtBy: 3,
         teaching: 2,
@@ -88,7 +88,7 @@ const reviewSeed = [
         comments: "hi 2"
     },
     {
-        modId: 'CS2020',
+        modId: 'CS2030',
         reviewBy: 3,
         taughtBy: 3,
         teaching: 1,
