@@ -2,7 +2,7 @@ const db = require('../db');
 
 const Module = db.sequelize.define('module', {
   modId: {
-    type: db.Sequelize.STRING(10), 
+    type: db.Sequelize.STRING(20), 
     allowNull: false,
     primaryKey: true
   },

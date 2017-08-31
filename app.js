@@ -57,6 +57,89 @@ app.get('/', (req, res) => {
 
 /****************************** Module ************************************* */
 
+app.get('/getModulesFullAttribute', (req, res) => {
+    Module.findAll().then((rawModules) => {
+        let modules = rawModules.map((rawModule) => {
+            return rawModule.dataValues;
+        });
+
+        let reviewsPromises = modules.map((module) => {
+            return Review.findAll({
+                where: {
+                    modId: module.modId
+                }
+            });
+        });
+
+        Promise.all(reviewsPromises).then((rawReviewsByModuleId) => {
+
+            let reviewsByModuleId = rawReviewsByModuleId.map((rawReviews) => {
+                return rawReviews.map((rawReview) => {
+                    return rawReview.dataValues;
+                });
+            });
+
+            let aggregateReviewByModuleId = reviewsByModuleId.map((reviews) => {
+
+                // Nothing to calculate if no reviews are presented for a module
+                if (reviews.length === 0) {
+                    return {
+                        percentage: null,
+                        avgTeaching: null,
+                        avgDifficulty: null,
+                        avgEnjoyability: null,
+                        avgWorkload: null,
+                        dateUpdated: null
+                    };
+                }
+
+                let accumulator = {
+                    totalRecommendations: 0,
+                    totalTeaching: 0,
+                    totalDifficulty: 0,
+                    totalEnjoyability: 0,
+                    totalWorkload: 0,
+                    dateUpdated: new Date(0)
+                };
+
+                for (let i = 0; i < reviews.length; i++) {
+                    let review = reviews[i];
+                    if (review.recommend) {
+                        accumulator.totalRecommendations = accumulator.totalRecommendations + 1;
+                    }
+                    accumulator.totalTeaching = accumulator.totalTeaching + review.teaching;
+                    accumulator.totalDifficulty = accumulator.totalDifficulty + review.difficulty;
+                    accumulator.totalEnjoyability = accumulator.totalEnjoyability + review.enjoyability;
+                    accumulator.totalWorkload = accumulator.totalWorkload + review.workload;
+                    accumulator.dateUpdated = new Date(Math.max(accumulator.dateUpdated, review.updatedAt));
+                }
+
+                let aggregateData = {
+                    percentage: accumulator.totalRecommendations / reviews.length,
+                    avgTeaching: accumulator.totalTeaching / reviews.length,
+                    avgDifficulty: accumulator.totalDifficulty / reviews.length,
+                    avgEnjoyability: accumulator.totalEnjoyability / reviews.length,
+                    avgWorkload: accumulator.totalWorkload / reviews.length,
+                    dateUpdated: accumulator.dateUpdated
+                };
+
+                return aggregateData;
+            });
+
+            let mergedModuleReviewData = [];
+            for (let j = 0; j < aggregateReviewByModuleId.length; j++) {
+                let currentReviewData = aggregateReviewByModuleId[j];
+                let currentModuleData = modules[j];
+                mergedModuleReviewData.push(Object.assign(currentReviewData, currentModuleData));
+            }
+
+            res.json({
+                modules: mergedModuleReviewData
+            });
+        });
+    });
+});
+
 // get all modules
 app.get('/getModules', (req, res) => {
     Module.findAll().then((rawModules) => {
