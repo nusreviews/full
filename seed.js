@@ -48,54 +48,47 @@ const reviewSeed = require('./seed/review_seed');
 const userSeed = require('./seed/user_seed');
 
 // Order is important here
-Module.sync({
-    force: true
-}).then(() => {
+let syncModels = [
+    Module.sync({
+        force: true
+    }),
+    Professor.sync({
+        force: true
+    }),
+    User.sync({
+        force: true
+    }),
+    Review.sync({
+        force: true
+    }),
+    Like.sync({
+        force: true
+    })
+];
+Promise.all(syncModels).then(() => {
     for (module of moduleSeed) {
         Module.create(module).catch((err) => {
             throw err;
         });
     }
-});
-
-Professor.sync({
-    force: true
-}).then(() => {
     for (professor of professorSeed) {
         Professor.create(professor).catch((err) => {
             throw err;
         });
     }
-});
-
-User.sync({
-    force: true
-}).then(() => {
     for (user of userSeed) {
         User.create(user).catch((err) => {
             throw err;
         });
     }
-});
-
-Review.sync({
-    force: true
-}).then(() => {
     for (review of reviewSeed) {
         Review.create(review).catch((err) => {
             throw err;
         });
     }
-});
-
-Like.sync({
-    force: true
-}).then(() => {
     for (like of likeSeed) {
         Like.create(like).catch((err) => {
             throw err;
         });
     }
 });
-
-
