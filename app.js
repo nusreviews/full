@@ -58,7 +58,7 @@ app.get('/', (req, res) => {
 /****************************** Module ************************************* */
 
 app.get('/getModulesFullAttribute', (req, res) => {
-    Modules.findAll().then((rawModules) => {
+    Module.findAll().then((rawModules) => {
         let modules = rawModules.map((rawModule) => {
             return rawModule.dataValues;
         });
