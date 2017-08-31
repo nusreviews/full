@@ -49,10 +49,10 @@ app.get('/getModules', (req, res) => {
 });
 
 // get specific module
-app.get('/getModule/:id', (req, res) =>{
+app.get('/getModule/:modId', (req, res) =>{
     Module.findOne({ 
         where: {
-            modId: req.params.id
+            modId: req.params.modId
         }
     }).then((module) => {
         res.json(module.dataValues);
@@ -60,11 +60,11 @@ app.get('/getModule/:id', (req, res) =>{
 });
 
 // get module percentage
-app.get('/getModulePercentage/:id', (req, res) => {
+app.get('/getModulePercentage/:modId', (req, res) => {
 
     let reviewCountPromise = Review.count({
         where: {
-            modId: req.params.id
+            modId: req.params.modId
         }
     }).then((reviewCount) => {
         return reviewCount;
@@ -72,7 +72,7 @@ app.get('/getModulePercentage/:id', (req, res) => {
 
     let recommendReviewCountPromise = Review.count({
         where: {
-            modId: req.params.id,
+            modId: req.params.modId,
             recommend: true
         }
     }).then((recommendReviewCount) => {
@@ -88,6 +88,24 @@ app.get('/getModulePercentage/:id', (req, res) => {
         });
     });
 });
+
+// get latest review date of module
+app.get('/getLatestReviewDate/:modId', (req, res) =>{
+    Review.findOne({
+        where: {
+            modId: req.params.modId
+        }, 
+        order: [
+            ['createdAt', 'DESC']
+        ]
+    }).then((rawReview) => {
+        res.json({
+            lastReviewDate: rawReview.dataValues.createdAt
+        });
+    });
+});
+
+
 /*
 // get reviews of module
 app.get('/getReview/:id', (req, res) => {
@@ -99,17 +117,6 @@ app.get('/getReview/:id', (req, res) => {
         } 
         res.send(result);
     });
-});
-
-// get latest review date of module
-app.get('/getLatestReviewDate/:id', (req, res) =>{
-        let sql = `SELECT * FROM review where modId = "${req.params.id}" group by modId ORDER BY reviewDate DESC`;
-        db.query(sql, (err, result)=>{
-            if(err){
-                throw err;
-            } 
-            res.send(result);
-        });
 });
 */
 
@@ -164,6 +171,12 @@ app.get('/getReviewsOfUser/:id', (req, res) =>{
         res.send(result);
     });
 });
+
+// get likes of a review
+app.get('/getLikes/:reviewId', (req, res) =>{
+    let sql = `select count(*) as amount from user, review, liked where user.userId = liked.userId and review.reviewId = liked.reviewId and liked.reviewId = ${req.params.reviewId}`;
+      querySql(sql, (result) =>{res.send(result);});
+  });
 */
 
 const port = config.get('http.port');
