@@ -192,7 +192,7 @@ app.get('/getLikes/:reviewId', (req, res) => {
 */
 
 // get reviews of module
-app.get('/getReview/:modId', (req, res) => {
+app.get('/getReviewsByModule/:modId', (req, res) => {
     Review.findAll({
         where: {
             modId: req.params.modId
@@ -208,7 +208,7 @@ app.get('/getReview/:modId', (req, res) => {
 });
 
 // get reviews card of user
-app.get('/getReviewsOfUser/:userId', (req, res) => {
+app.get('/getReviewsByUser/:userId', (req, res) => {
     Review.findAll({
         where: {
             userId: req.params.userId
