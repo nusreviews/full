@@ -71,7 +71,7 @@ app.get('/getModulesFullAttribute', (req, res) => {
             });
         });
 
-        Promise.all(reviewPromises).then((rawReviewsByModuleId) => {
+        Promise.all(reviewsPromises).then((rawReviewsByModuleId) => {
 
             let reviewsByModuleId = rawReviewsByModuleId.map((rawReviews) => {
                 return rawReviews.map((rawReview) => {
