@@ -12,3 +12,5 @@ const likeSeed = [
         userId: 3
     }
 ];
+
+module.exports = likeSeed;
