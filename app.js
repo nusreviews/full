@@ -47,7 +47,6 @@ app.get('/', (req, res) => {
     res.json({
         message: "Hello World"
     });
-    
 });
 
 // sql query
@@ -81,7 +80,7 @@ app.get('/getModulePercentage/:modId', (req, res) =>{
 
 // get latest review date of module
 app.get('/getLatestReviewDate/:modId', (req, res) =>{
-    let sql = `SELECT * FROM review where modId = "${req.params.modId}" group by modId ORDER BY reviewDate DESC`;
+    let sql = `SELECT * FROM review where modId = "${req.params.modId}" group by modId ORDER BY dateUpdated DESC`;
     querySql(sql, (result) =>{res.send(result);});
 });
 
@@ -90,7 +89,15 @@ app.get('/getLatestReviewDate/:modId', (req, res) =>{
 // get All Professor
 app.get('/getProfessors', (req, res) =>{
     let sql = "select * from professor";
-    querySql(sql, (result) =>{res.send(result);});
+    querySql(sql, (result) =>{
+        res.send(result);
+
+        for(var i = 0; i < result.length; i++) {
+            var obj = result[i];
+            obj.a = "haha";
+            console.log(obj.a);
+        }
+    });
 });
 
 // get a prof
@@ -127,6 +134,35 @@ app.get('/insertReview/:modId/:reviewBy/:taughtBy/:teaching/:difficulty/:enjoyab
 });
 
 /****************************** Specific function ************************************* */
+
+let sql_getModulesPercentage = 'select numRecommend.modId, floor((numRecommend/totalReview)*100) as percentage from ' + 
+                                '(select modId, count(*) as numRecommend from review where recommend = true group by modId) as numRecommend, ' +
+                                '(select modId, count(*) as totalReview from review group by modId) as numReview ' +
+                                'where numRecommend.modId = numReview.modId';
+
+let sql_getModulesAvgRatings = 'select teachingTable.modId, totalTeaching/totalReview as avgTeaching, totalDifficulty/totalReview as avgDifficulty, totalEnjoyability/totalReview as avgEnjoyability, totalWorkload/totalReview as avgWorkload ' +
+                                'from (select modId, sum(teaching) as totalTeaching, sum(difficulty) as totalDifficulty, sum(enjoyability) as totalEnjoyability, sum(workload) as totalWorkLoad from review group by modId) as teachingTable, ' +
+                                '(select modId, count(*) as totalReview from review group by modId) as numReview ' +
+                                'where numReview.modId = teachingTable.modId';
+
+let sql_getLatestModified = 'SELECT modId, dateUpdated FROM review  group by modId ORDER BY dateUpdated DESC';
+
+let sql_getModuleFull = 'select module.modId, name, description, percentageTable.percentage, rateTable.avgTeaching, rateTable.avgDifficulty, rateTable.avgEnjoyability, rateTable.avgWorkload, dateT.dateUpdated from module ' +
+                        'left join (' + sql_getModulesPercentage + ') as percentageTable on module.modId = percentageTable.modId ' +
+                        'left join (' + sql_getModulesAvgRatings + ') as rateTable on module.modId = rateTable.modId ' +
+                        'left join (' + sql_getLatestModified + ') as dateT on module.modId = dateT.modId';
+
+
+
+// get all modules with full attribute
+app.get('/getModulesFullAttribute', (req, res) =>{
+    let testSql = 'SELECT modId, date(dateUpdated) as test FROM review  group by modId ORDER BY dateUpdated DESC ;';
+    querySql(testSql, (result) =>{
+        res.send(result);
+        console.log(result);
+    });
+});
+
 
 app.get('/profile', passport.authenticate(['jwt'], { session: false }), (req, res) => {
     res.json(req.user);
