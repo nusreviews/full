@@ -48,56 +48,49 @@ const reviewSeed = require('./seed/review_seed');
 const userSeed = require('./seed/user_seed');
 
 // Order is important here
-let syncModels = [
-    Module.sync({
-        force: true
-    }),
-    Professor.sync({
-        force: true
-    }),
-    User.sync({
-        force: true
-    })
-];
-Promise.all(syncModels).then(() => {
-    let childSyncModels = [
-        Review.sync({
-            force: true
-        }),
-        Like.sync({
-            force: true
-        })
+db.sequelize.dropAllSchemas().then(() => {
+    let syncModels = [
+        Module.sync(),
+        Professor.sync(),
+        User.sync()
     ];
 
-    Promise.all(childSyncModels).then(() => {
-        for (module of moduleSeed) {
-            Module.create(module).catch((err) => {
-                throw err;
-            });
-        }
-        for (professor of professorSeed) {
-            Professor.create(professor).catch((err) => {
-                throw err;
-            });
-        }
-        for (user of userSeed) {
-            User.create(user).catch((err) => {
-                throw err;
-            });
-        }
-        for (review of reviewSeed) {
-            Review.create(review).catch((err) => {
-                throw err;
-            });
-        }
-        for (like of likeSeed) {
-            Like.create(like).catch((err) => {
-                throw err;
-            });
-        }
+    Promise.all(syncModels).then(() => {
+        let childSyncModels = [
+            Review.sync(),
+            Like.sync()
+        ];
+
+        Promise.all(childSyncModels).then(() => {
+            for (module of moduleSeed) {
+                Module.create(module).catch((err) => {
+                    throw err;
+                });
+            }
+            for (professor of professorSeed) {
+                Professor.create(professor).catch((err) => {
+                    throw err;
+                });
+            }
+            for (user of userSeed) {
+                User.create(user).catch((err) => {
+                    throw err;
+                });
+            }
+            for (review of reviewSeed) {
+                Review.create(review).catch((err) => {
+                    throw err;
+                });
+            }
+            for (like of likeSeed) {
+                Like.create(like).catch((err) => {
+                    throw err;
+                });
+            }
+        }).catch((err) => {
+            console.error(err);
+        });
     }).catch((err) => {
         console.error(err);
     });
-}).catch((err) => {
-    console.error(err);
 });
