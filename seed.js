@@ -39,11 +39,21 @@ User.hasMany(Review, {
 });
 
 // Order is important here
-Module.sync();
-Professor.sync();
-User.sync();
-Review.sync();
-Like.sync();
+Module.sync({
+    force: true
+});
+Professor.sync({
+    force: true
+});
+User.sync({
+    force: true
+});
+Review.sync({
+    force: true
+});
+Like.sync({
+    force: true
+});
 
 /******************************* Seed ************************************** */
 
