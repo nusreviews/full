@@ -55,7 +55,7 @@ db.sequelize.dropAllSchemas().then(() => {
         User.sync()
     ]);
 }).then(() => {
-    return Reviews.sync();
+    return Review.sync();
 }).then(() => {
     return Like.sync();
 }).then(() => {
