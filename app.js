@@ -133,7 +133,9 @@ app.get('/getModulesFullAttribute', (req, res) => {
                 mergedModuleReviewData.push(Object.assign(currentReviewData, currentModuleData));
             }
 
-            res.json(mergedModuleReviewData);
+            res.json({
+                modules: mergedModuleReviewData
+            });
         });
     });
 });
