@@ -26,6 +26,10 @@ User.hasMany(Review, {
     sourceKey: 'userId'
 });
 
+Module.sync();
+Professor.sync();
+User.sync();
+Review.sync();
 
 const app = express();
 
@@ -83,9 +87,16 @@ app.get('/getModulePercentage/:modId', (req, res) => {
     Promise.all(queryPromises).then((queryCounts) => {
         let reviewCount = queryCounts[0];
         let recommendReviewCount = queryCounts[1];
-        res.json({
-            percent: (recommendReviewCount / reviewCount) * 100
-        });
+
+        if (reviewCount <= 0 || recommendReviewCount <= 0) {
+            res.json({
+                percent: NaN
+            });
+        } else {
+            res.json({
+                percent: (recommendReviewCount / reviewCount) * 100
+            });
+        }
     });
 });
 
