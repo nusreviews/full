@@ -52,7 +52,7 @@ Review.sync({
     force: true
 });
 Like.sync({
-    force: trueg
+    force: true
 });
 
 /******************************* Seed ************************************** */
