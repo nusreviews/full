@@ -66,7 +66,7 @@ const config = convict({
             }, 
             password: {
                 doc: 'The password for database login', 
-                default: 'password', 
+                default: 'limtaeu', 
                 env: 'MYSQL_PASSWORD'
             }
         }
