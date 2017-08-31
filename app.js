@@ -171,7 +171,7 @@ app.get('/getProfessor/:id', (req, res) => {
     }).then((rawProfessor) => {
         if (rawProfessor === null) {
             res.json({
-                professor: null;
+                professor: null
             });
         } else {
             res.json({
