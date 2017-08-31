@@ -3,6 +3,7 @@ const config = require('./config');
 const db = require('./db');
 
 /*************************** Associations ********************************** */
+const Like = require('./models/like');
 const Module = require('./models/module');
 const Professor = require('./models/professor');
 const Review = require('./models/review');
@@ -20,16 +21,30 @@ Professor.hasMany(Review, {
     sourceKey: 'profId'
 });
 
+Review.hasMany(Like, {
+    as: 'Likes',
+    foreignKey: 'reviewId',
+    sourceKey: 'reviewId'
+});
+
+User.hasMany(Like, {
+    as: 'Likes',
+    foreignKey: 'userId',
+    sourceKey: 'userId'
+});
+
 User.hasMany(Review, {
     as: 'Reviews',
     foreignKey: 'reviewBy',
     sourceKey: 'userId'
 });
 
+// Order is important here
 Module.sync();
 Professor.sync();
 User.sync();
 Review.sync();
+Like.sync();
 
 const app = express();
 
@@ -48,18 +63,28 @@ app.get('/getModules', (req, res) => {
         let modules = rawModules.map((rawModule) => {
             return rawModule.dataValues;
         });
-        res.json(modules);
+        res.json({
+            modules: modules
+        });
     });
 });
 
 // get specific module
-app.get('/getModule/:modId', (req, res) =>{
+app.get('/getModule/:modId', (req, res) => {
     Module.findOne({ 
         where: {
             modId: req.params.modId
         }
-    }).then((module) => {
-        res.json(module.dataValues);
+    }).then((rawModule) => {
+        if (rawModule === null) {
+            res.json({
+                module: null
+            });
+        } else {
+            res.json({
+                module: rawModule.dataValues
+            });
+        }
     });
 });
 
@@ -90,7 +115,7 @@ app.get('/getModulePercentage/:modId', (req, res) => {
 
         if (reviewCount <= 0 || recommendReviewCount <= 0) {
             res.json({
-                percent: NaN
+                percent: null
             });
         } else {
             res.json({
@@ -101,7 +126,7 @@ app.get('/getModulePercentage/:modId', (req, res) => {
 });
 
 // get latest review date of module
-app.get('/getLatestReviewDate/:modId', (req, res) =>{
+app.get('/getLatestReviewDate/:modId', (req, res) => {
     Review.findOne({
         where: {
             modId: req.params.modId
@@ -110,84 +135,103 @@ app.get('/getLatestReviewDate/:modId', (req, res) =>{
             ['createdAt', 'DESC']
         ]
     }).then((rawReview) => {
+        if (rawReview === null) {
+            res.json({
+                lastReviewDate: null
+            });
+        } else {
+            res.json({
+                lastReviewDate: rawReview.dataValues.createdAt
+            });
+        }
+    });
+});
+
+/****************************** Professor ************************************* */
+
+
+// get All Professor
+app.get('/getProfessors', (req, res) =>{
+    Professor.findAll().then((rawProfessors) => {
+        let professors = rawProfessors.map((rawProfessor) => {
+            return rawProfessor.dataValues;
+        });
         res.json({
-            lastReviewDate: rawReview.dataValues.createdAt
+            professors: professors
+        });
+    });
+});
+
+// get a prof
+app.get('/getProfessor/:id', (req, res) => {
+    Professor.findOne({
+        where: {
+            profId: req.params.profId
+        }
+    }).then((rawProfessor) => {
+        if (rawProfessor === null) {
+            res.json({
+                professor: null;
+            });
+        } else {
+            res.json({
+                professor: rawProfessor.dataValues
+            });
+        }
+    });
+});
+
+/****************************** Review ************************************* */
+
+/*
+// get likes of a review
+app.get('/getLikes/:reviewId', (req, res) => {
+    let sql = `select count(*) as amount from user, review, liked where user.userId = liked.userId and review.reviewId = liked.reviewId and liked.reviewId = ${req.params.reviewId}`;
+    querySql(sql, (result) =>{res.send(result);});
+});
+*/
+
+// get reviews of module
+app.get('/getReview/:modId', (req, res) => {
+    Review.findAll({
+        where: {
+            modId: req.params.modId
+        }
+    }).then((rawReviews) => {
+        let reviews = rawReviews.map((rawReview) => {
+            return rawReview.dataValues;
+        });
+        res.json({
+            reviews: reviews
+        });
+    });
+});
+
+// get reviews card of user
+app.get('/getReviewsOfUser/:userId', (req, res) => {
+    Review.findAll({
+        where: {
+            userId: req.params.userId
+        }
+    }).then((rawReviews) => {
+        let reviews = rawReviews.map((rawReview) => {
+            return rawReview.dataValues;
+        });
+        res.json({
+            reviews: reviews
         });
     });
 });
 
 
-/*
-// get reviews of module
-app.get('/getReview/:id', (req, res) => {
-
-    let sql = `select * from review where review.modId = "${req.params.id}"`;
-    db.query(sql, (err, result)=>{
-        if(err){
-            throw err;
-        } 
-        res.send(result);
-    });
-});
-*/
-
-/****************************** Professor ************************************* */
-
-/*
-// get All Professor
-app.get('/getProfessors', (req, res) =>{
-    let sql = "select * from professor";
-    db.query(sql, (err, result)=>{
-        if(err){
-            throw err;
-        } 
-        res.send(result);
-    });
-});
-
-// get a prof
-app.get('/getProfessor/:id', (req, res) =>{
-    let sql = `select * from professor where profId = "${req.params.id}"`;
-    db.query(sql, (err, result)=>{
-        if(err){
-            throw err;
-        } 
-        res.send(result);
-    });
-});
-*/
-
-/****************************** Review ************************************* */
-
+// Should be a post request
 /*
 // insert review
-app.get('/insertReview/:id/:reviewBy/:taughtBy/:teaching/:difficulty/:enjoyability/:workload/:recommend/:comments', (req, res) =>{
+app.get('/insertReview/:modId/:reviewBy/:taughtBy/:teaching/:difficulty/:enjoyability/:workload/:recommend/:comments', (req, res) =>{
     let sql = `insert into review (modId, reviewBy, taughtBy, teaching, difficulty, enjoyability, workload, recommend, comments) 
-    values ("${req.params.id}", ${req.params.reviewBy}, ${req.params.taughtBy}, ${req.params.teaching}, ${req.params.difficulty}, ${req.params.enjoyability}, ${req.params.workload}, ${req.params.recommend}, "${req.params.comments}")`;
-    db.query(sql, (err, result)=>{
-        if(err){
-            throw err;
-        } 
-        res.send("insert succesful");
-    });
+    values ("${req.params.modId}", ${req.params.reviewBy}, ${req.params.taughtBy}, ${req.params.teaching}, ${req.params.difficulty}, ${req.params.enjoyability}, ${req.params.workload}, ${req.params.recommend}, "${req.params.comments}")`;
+    querySql(sql, (result) =>{res.send(result);});
 });
-
-// get reviews card of user
-app.get('/getReviewsOfUser/:id', (req, res) =>{
-    let sql = `select * from review, user where user.userId = ${req.params.id} and review.reviewBy = user.userId`;
-    db.query(sql, (err, result)=>{
-        if(err){
-            throw err;
-        } 
-        res.send(result);
-    });
-});
-
-// get likes of a review
-app.get('/getLikes/:reviewId', (req, res) =>{
-    let sql = `select count(*) as amount from user, review, liked where user.userId = liked.userId and review.reviewId = liked.reviewId and liked.reviewId = ${req.params.reviewId}`;
-      querySql(sql, (result) =>{res.send(result);});
-  });
 */
 
 const port = config.get('http.port');
