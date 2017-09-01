@@ -175,7 +175,6 @@ app.get('/getModulesFullAttribute', (req, res) => {
 app.get('/getModules', (req, res) => {
     let limit = getModuleLimit(Number(req.query.limit));
     let offset = getModuleOffset(Number(req.query.offset));
-
     let moduleQueryOptions = {
         limit: limit,
         offset: offset
@@ -338,17 +337,17 @@ const getReviewOffset = (proposedOffset) => {
 app.get('/getReviews', (req, res) => {
     let limit = getReviewLimit(Number(req.query.limit));
     let offset = getReviewOffset(Number(req.query.offset));
-
     let reviewQueryOptions = {
         limit: limit,
-        offset: offset
+        offset: offset,
+        where: {}
     };
-    
+
     if (req.query.module !== undefined) {
-        reviewQueryOptions.modId = req.query.module;
+        reviewQueryOptions.where.modId = req.query.module;
     }
     if (req.query.user !== undefined) {
-        reviewQueryOptions.userId = req.query.user;
+        reviewQueryOptions.where.userId = req.query.user;
     }
 
     Review.findAll(reviewQueryOptions).then((rawReviews) => {
