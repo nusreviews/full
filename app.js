@@ -313,29 +313,17 @@ app.get('/getLikes/:reviewId', (req, res) => {
 });
 */
 
-// get reviews of module
-app.get('/getReviewsByModule/:modId', (req, res) => {
-    Review.findAll({
-        where: {
-            modId: req.params.modId
-        }
-    }).then((rawReviews) => {
-        let reviews = rawReviews.map((rawReview) => {
-            return rawReview.dataValues;
-        });
-        res.json({
-            reviews: reviews
-        });
-    });
-});
+// Fetch reviews and modify behavior by query parameters
+app.get('/getReviews', (req, res) => {
+    let reviewQueryOptions = {};
+    if (req.query.module !== undefined) {
+        reviewQueryOptions.modId = req.query.module;
+    }
+    if (req.query.user !== undefined) {
+        reviewQueryOptions.userId = req.query.user;
+    }
 
-// get reviews card of user
-app.get('/getReviewsByUser/:userId', (req, res) => {
-    Review.findAll({
-        where: {
-            userId: req.params.userId
-        }
-    }).then((rawReviews) => {
+    Review.findAll(reviewQueryOptions).then((rawReviews) => {
         let reviews = rawReviews.map((rawReview) => {
             return rawReview.dataValues;
         });
