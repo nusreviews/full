@@ -313,9 +313,37 @@ app.get('/getLikes/:reviewId', (req, res) => {
 });
 */
 
+const reviewDefaultLimit = 10;
+const reviewDefaultOffset = 0;
+
+const reviewMaxLimit = 100;
+
+const getReviewLimit = (proposedLimit) => {
+    if (Number.isNaN(proposedLimit) || proposedLimit < 0) {
+        return reviewDefaultLimit;
+    } else {
+        return Math.min(proposedLimit, reviewMaxLimit);
+    }
+};
+
+const getReviewOffset = (proposedOffset) => {
+    if (Number.isNaN(proposedOffset) || proposedOffset < 0) {
+        return reviewDefaultOffset;
+    } else {
+        return proposedOffset;
+    }
+};
+
 // Fetch reviews and modify behavior by query parameters
 app.get('/getReviews', (req, res) => {
-    let reviewQueryOptions = {};
+    let limit = getReviewLimit(Number(req.query.limit));
+    let offset = getReviewOffset(Number(req.query.offset));
+
+    let reviewQueryOptions = {
+        limit: limit,
+        offset: offset
+    };
+    
     if (req.query.module !== undefined) {
         reviewQueryOptions.modId = req.query.module;
     }
