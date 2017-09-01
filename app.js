@@ -173,7 +173,15 @@ app.get('/getModulesFullAttribute', (req, res) => {
 
 // get all modules
 app.get('/getModules', (req, res) => {
-    Module.findAll().then((rawModules) => {
+    let limit = getModuleLimit(Number(req.query.limit));
+    let offset = getModuleOffset(Number(req.query.offset));
+
+    let moduleQueryOptions = {
+        limit: limit,
+        offset: offset
+    };
+
+    Module.findAll(moduleQueryOptions).then((rawModules) => {
         let modules = rawModules.map((rawModule) => {
             return rawModule.dataValues;
         });
