@@ -354,6 +354,45 @@ app.get('/getReviews', (req, res) => {
         let reviews = rawReviews.map((rawReview) => {
             return rawReview.dataValues;
         });
+
+        let likesPromises = reviews.map((review) => {
+            return Like.findAll({
+                where: {
+                    reviewId: review.reviewId
+                }
+            });
+        });
+
+        Promise.all(likesPromises).then((rawLikesByReviewId) => {
+            let likesByReviewId = rawLikesByReviewId.map((rawLikes) => {
+                return rawLikes.map((rawLike) => {
+                    return rawLike.dataValues;
+                });
+            });
+
+            let relevantLikeDataByReviewId = likesByReviewId.map((likes) => {
+                let likesCount = likes.length;
+                let hasUserLike = likes.filter((like) => {
+                    return like.userId === req.query.user;
+                }).length > 0;
+
+                return {
+                    totalLikes: likesCount,
+                    hasUserLike: hasUserLike
+                };
+            });
+
+            let mergedReviewLikeData = [];
+            for (let i = 0; i < reviews.length; i++) {
+                let currentReviewData = reviews[i];
+                let currentLikeData = relevantLikeDataByReviewId[i];
+                mergedReviewLikeData.push(Object.assign(currentLikeData, currentReviewData));
+            }
+
+            res.json({
+                reviews: mergedReviewLikeData
+            });
+        });
         res.json({
             reviews: reviews
         });
