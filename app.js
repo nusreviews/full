@@ -57,6 +57,11 @@ app.get('/', (req, res) => {
 
 /****************************** Module ************************************* */
 
+const moduleDefaultLimit = 10;
+const moduleDefaultOffset = 0;
+
+const moduleMaxLimit = 100;
+
 // Takes an array of reviews and returns an object that
 // describes the aggregate data (e.g. avg teaching score)
 const aggregateReviewsData = (reviews) => {
@@ -105,8 +110,32 @@ const aggregateReviewsData = (reviews) => {
     return aggregateData;
 };
 
+const getModuleLimit = (proposedLimit) => {
+    if (Number.isNaN(proposedLimit) || proposedLimit < 0) {
+        return moduleDefaultLimit;
+    } else {
+        return Math.min(proposedLimit, moduleMaxLimit);
+    }
+};
+
+const getModuleOffset = (proposedOffset) => {
+    if (Number.isNaN(proposedOffset) || proposedOffset < 0) {
+        return moduleDefaultOffset;
+    } else {
+        return proposedOffset;
+    }
+};
+
 app.get('/getModulesFullAttribute', (req, res) => {
-    Module.findAll().then((rawModules) => {
+    let limit = getModuleLimit(req.query.limit);
+    let offset = getModuleOffset(req.query.offset);
+
+    let moduleQueryOptions = {
+        limit: limit,
+        offset: offset
+    };
+
+    Module.findAll(moduleQueryOptions).then((rawModules) => {
         let modules = rawModules.map((rawModule) => {
             return rawModule.dataValues;
         });
