@@ -347,7 +347,7 @@ app.get('/getReviews', (req, res) => {
         reviewQueryOptions.where.modId = req.query.module;
     }
     if (req.query.user !== undefined) {
-        reviewQueryOptions.where.userId = req.query.user;
+        reviewQueryOptions.where.reviewBy = req.query.user;
     }
 
     Review.findAll(reviewQueryOptions).then((rawReviews) => {
