@@ -78,6 +78,9 @@ db.sequelize.dropAllSchemas().then(() => {
     return Promise.all(likeSeed.map((like) => {
         return Like.create(like);
     }));
+}).then(() => {
+    console.log('Seeding complete');
+    return undefined;
 }).catch((err) => {
     console.error(err);
 });
