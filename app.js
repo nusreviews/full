@@ -127,8 +127,8 @@ const getModuleOffset = (proposedOffset) => {
 };
 
 app.get('/getModulesFullAttribute', (req, res) => {
-    let limit = getModuleLimit(req.query.limit);
-    let offset = getModuleOffset(req.query.offset);
+    let limit = getModuleLimit(Number(req.query.limit));
+    let offset = getModuleOffset(Number(req.query.offset));
 
     let moduleQueryOptions = {
         limit: limit,
