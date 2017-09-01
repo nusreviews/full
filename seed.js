@@ -42,7 +42,7 @@ User.hasMany(Review, {
 /******************************* Seed ************************************** */
 
 const likeSeed = require('./seed/like_seed');
-const moduleSeed = require('./seed/module_seed');
+const csModuleSeed = require('./seed/cs_module_seed');
 const professorSeed = require('./seed/professor_seed');
 const reviewSeed = require('./seed/review_seed');
 const userSeed = require('./seed/user_seed');
@@ -59,7 +59,7 @@ db.sequelize.dropAllSchemas().then(() => {
 }).then(() => {
     return Like.sync();
 }).then(() => {
-    return Promise.all(moduleSeed.map((module) => {
+    return Promise.all(csModuleSeed.map((module) => {
         return Module.create(module);
     }));
 }).then(() => {
@@ -78,6 +78,9 @@ db.sequelize.dropAllSchemas().then(() => {
     return Promise.all(likeSeed.map((like) => {
         return Like.create(like);
     }));
+}).then(() => {
+    console.log('Seeding complete');
+    return undefined;
 }).catch((err) => {
     console.error(err);
 });

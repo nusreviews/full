@@ -57,12 +57,88 @@ app.get('/', (req, res) => {
 
 /****************************** Module ************************************* */
 
+const moduleDefaultLimit = 10;
+const moduleDefaultOffset = 0;
+
+const moduleMaxLimit = 100;
+
+// Takes an array of reviews and returns an object that
+// describes the aggregate data (e.g. avg teaching score)
+const aggregateReviewsData = (reviews) => {
+    // Nothing to calculate if no reviews are presented for a module
+    if (reviews.length === 0) {
+        return {
+            percentage: null,
+            avgTeaching: null,
+            avgDifficulty: null,
+            avgEnjoyability: null,
+            avgWorkload: null,
+            dateUpdated: null
+        };
+    }
+
+    let accumulator = {
+        totalRecommendations: 0,
+        totalTeaching: 0,
+        totalDifficulty: 0,
+        totalEnjoyability: 0,
+        totalWorkload: 0,
+        dateUpdated: new Date(0)
+    };
+
+    for (let i = 0; i < reviews.length; i++) {
+        let review = reviews[i];
+        if (review.recommend) {
+            accumulator.totalRecommendations = accumulator.totalRecommendations + 1;
+        }
+        accumulator.totalTeaching = accumulator.totalTeaching + review.teaching;
+        accumulator.totalDifficulty = accumulator.totalDifficulty + review.difficulty;
+        accumulator.totalEnjoyability = accumulator.totalEnjoyability + review.enjoyability;
+        accumulator.totalWorkload = accumulator.totalWorkload + review.workload;
+        accumulator.dateUpdated = new Date(Math.max(accumulator.dateUpdated, review.updatedAt));
+    }
+
+    let aggregateData = {
+        percentage: accumulator.totalRecommendations / reviews.length,
+        avgTeaching: accumulator.totalTeaching / reviews.length,
+        avgDifficulty: accumulator.totalDifficulty / reviews.length,
+        avgEnjoyability: accumulator.totalEnjoyability / reviews.length,
+        avgWorkload: accumulator.totalWorkload / reviews.length,
+        dateUpdated: accumulator.dateUpdated
+    };
+
+    return aggregateData;
+};
+
+const getModuleLimit = (proposedLimit) => {
+    if (Number.isNaN(proposedLimit) || proposedLimit < 0) {
+        return moduleDefaultLimit;
+    } else {
+        return Math.min(proposedLimit, moduleMaxLimit);
+    }
+};
+
+const getModuleOffset = (proposedOffset) => {
+    if (Number.isNaN(proposedOffset) || proposedOffset < 0) {
+        return moduleDefaultOffset;
+    } else {
+        return proposedOffset;
+    }
+};
+
 app.get('/getModulesFullAttribute', (req, res) => {
-    Module.findAll().then((rawModules) => {
+    let limit = getModuleLimit(Number(req.query.limit));
+    let offset = getModuleOffset(Number(req.query.offset));
+
+    let moduleQueryOptions = {
+        limit: limit,
+        offset: offset
+    };
+
+    Module.findAll(moduleQueryOptions).then((rawModules) => {
         let modules = rawModules.map((rawModule) => {
             return rawModule.dataValues;
         });
-
         let reviewsPromises = modules.map((module) => {
             return Review.findAll({
                 where: {
@@ -72,58 +148,13 @@ app.get('/getModulesFullAttribute', (req, res) => {
         });
 
         Promise.all(reviewsPromises).then((rawReviewsByModuleId) => {
-
             let reviewsByModuleId = rawReviewsByModuleId.map((rawReviews) => {
                 return rawReviews.map((rawReview) => {
                     return rawReview.dataValues;
                 });
             });
-
             let aggregateReviewByModuleId = reviewsByModuleId.map((reviews) => {
-
-                // Nothing to calculate if no reviews are presented for a module
-                if (reviews.length === 0) {
-                    return {
-                        percentage: null,
-                        avgTeaching: null,
-                        avgDifficulty: null,
-                        avgEnjoyability: null,
-                        avgWorkload: null,
-                        dateUpdated: null
-                    };
-                }
-
-                let accumulator = {
-                    totalRecommendations: 0,
-                    totalTeaching: 0,
-                    totalDifficulty: 0,
-                    totalEnjoyability: 0,
-                    totalWorkload: 0,
-                    dateUpdated: new Date(0)
-                };
-
-                for (let i = 0; i < reviews.length; i++) {
-                    let review = reviews[i];
-                    if (review.recommend) {
-                        accumulator.totalRecommendations = accumulator.totalRecommendations + 1;
-                    }
-                    accumulator.totalTeaching = accumulator.totalTeaching + review.teaching;
-                    accumulator.totalDifficulty = accumulator.totalDifficulty + review.difficulty;
-                    accumulator.totalEnjoyability = accumulator.totalEnjoyability + review.enjoyability;
-                    accumulator.totalWorkload = accumulator.totalWorkload + review.workload;
-                    accumulator.dateUpdated = new Date(Math.max(accumulator.dateUpdated, review.updatedAt));
-                }
-
-                let aggregateData = {
-                    percentage: accumulator.totalRecommendations / reviews.length,
-                    avgTeaching: accumulator.totalTeaching / reviews.length,
-                    avgDifficulty: accumulator.totalDifficulty / reviews.length,
-                    avgEnjoyability: accumulator.totalEnjoyability / reviews.length,
-                    avgWorkload: accumulator.totalWorkload / reviews.length,
-                    dateUpdated: accumulator.dateUpdated
-                };
-
-                return aggregateData;
+                return aggregateReviewsData(reviews);
             });
 
             let mergedModuleReviewData = [];
@@ -142,7 +173,14 @@ app.get('/getModulesFullAttribute', (req, res) => {
 
 // get all modules
 app.get('/getModules', (req, res) => {
-    Module.findAll().then((rawModules) => {
+    let limit = getModuleLimit(Number(req.query.limit));
+    let offset = getModuleOffset(Number(req.query.offset));
+    let moduleQueryOptions = {
+        limit: limit,
+        offset: offset
+    };
+
+    Module.findAll(moduleQueryOptions).then((rawModules) => {
         let modules = rawModules.map((rawModule) => {
             return rawModule.dataValues;
         });
@@ -274,34 +312,86 @@ app.get('/getLikes/:reviewId', (req, res) => {
 });
 */
 
-// get reviews of module
-app.get('/getReviewsByModule/:modId', (req, res) => {
-    Review.findAll({
-        where: {
-            modId: req.params.modId
-        }
-    }).then((rawReviews) => {
-        let reviews = rawReviews.map((rawReview) => {
-            return rawReview.dataValues;
-        });
-        res.json({
-            reviews: reviews
-        });
-    });
-});
+const reviewDefaultLimit = 10;
+const reviewDefaultOffset = 0;
 
-// get reviews card of user
-app.get('/getReviewsByUser/:userId', (req, res) => {
-    Review.findAll({
-        where: {
-            userId: req.params.userId
-        }
-    }).then((rawReviews) => {
+const reviewMaxLimit = 100;
+
+const getReviewLimit = (proposedLimit) => {
+    if (Number.isNaN(proposedLimit) || proposedLimit < 0) {
+        return reviewDefaultLimit;
+    } else {
+        return Math.min(proposedLimit, reviewMaxLimit);
+    }
+};
+
+const getReviewOffset = (proposedOffset) => {
+    if (Number.isNaN(proposedOffset) || proposedOffset < 0) {
+        return reviewDefaultOffset;
+    } else {
+        return proposedOffset;
+    }
+};
+
+// Fetch reviews and modify behavior by query parameters
+app.get('/getReviews', (req, res) => {
+    let limit = getReviewLimit(Number(req.query.limit));
+    let offset = getReviewOffset(Number(req.query.offset));
+    let reviewQueryOptions = {
+        limit: limit,
+        offset: offset,
+        where: {}
+    };
+
+    if (req.query.module !== undefined) {
+        reviewQueryOptions.where.modId = req.query.module;
+    }
+    if (req.query.user !== undefined) {
+        reviewQueryOptions.where.reviewBy = req.query.user;
+    }
+
+    Review.findAll(reviewQueryOptions).then((rawReviews) => {
         let reviews = rawReviews.map((rawReview) => {
             return rawReview.dataValues;
         });
-        res.json({
-            reviews: reviews
+
+        let likesPromises = reviews.map((review) => {
+            return Like.findAll({
+                where: {
+                    reviewId: review.reviewId
+                }
+            });
+        });
+
+        Promise.all(likesPromises).then((rawLikesByReviewId) => {
+            let likesByReviewId = rawLikesByReviewId.map((rawLikes) => {
+                return rawLikes.map((rawLike) => {
+                    return rawLike.dataValues;
+                });
+            });
+
+            let relevantLikeDataByReviewId = likesByReviewId.map((likes) => {
+                let likesCount = likes.length;
+                let hasUserLike = likes.filter((like) => {
+                    return like.userId === req.query.likedBy;
+                }).length > 0;
+
+                return {
+                    totalLikes: likesCount,
+                    hasUserLike: hasUserLike
+                };
+            });
+
+            let mergedReviewLikeData = [];
+            for (let i = 0; i < reviews.length; i++) {
+                let currentReviewData = reviews[i];
+                let currentLikeData = relevantLikeDataByReviewId[i];
+                mergedReviewLikeData.push(Object.assign(currentLikeData, currentReviewData));
+            }
+
+            res.json({
+                reviews: mergedReviewLikeData
+            });
         });
     });
 });
