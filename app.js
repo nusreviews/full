@@ -393,9 +393,6 @@ app.get('/getReviews', (req, res) => {
                 reviews: mergedReviewLikeData
             });
         });
-        res.json({
-            reviews: reviews
-        });
     });
 });
 
