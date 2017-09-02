@@ -98,7 +98,7 @@ const aggregateReviewsData = (reviews) => {
     }
 
     let aggregateData = {
-        percentage: accumulator.totalRecommendations / reviews.length,
+        percentage: accumulator.totalRecommendations / reviews.length * 100,
         avgTeaching: accumulator.totalTeaching / reviews.length,
         avgDifficulty: accumulator.totalDifficulty / reviews.length,
         avgEnjoyability: accumulator.totalEnjoyability / reviews.length,
@@ -128,11 +128,25 @@ const getModuleOffset = (proposedOffset) => {
 app.get('/getModulesFullAttribute', (req, res) => {
     let limit = getModuleLimit(Number(req.query.limit));
     let offset = getModuleOffset(Number(req.query.offset));
+    let strict = req.query.strict;
 
     let moduleQueryOptions = {
         limit: limit,
-        offset: offset
+        offset: offset,
+        where: {}
     };
+
+    if (req.query.modId !== undefined) {
+        if (strict === "true") {
+            moduleQueryOptions.where.modId = {
+                $eq: req.query.modId
+            };
+        } else {
+            moduleQueryOptions.where.modId = {
+                $like: '%' + req.query.modId + '%'
+            };
+        }
+    }
 
     Module.findAll(moduleQueryOptions).then((rawModules) => {
         let modules = rawModules.map((rawModule) => {
@@ -174,10 +188,25 @@ app.get('/getModulesFullAttribute', (req, res) => {
 app.get('/getModules', (req, res) => {
     let limit = getModuleLimit(Number(req.query.limit));
     let offset = getModuleOffset(Number(req.query.offset));
+    let strict = req.query.strict;
+
     let moduleQueryOptions = {
         limit: limit,
-        offset: offset
+        offset: offset,
+        where: {}
     };
+
+    if (req.query.modId !== undefined) {
+        if (strict === "true") {
+            moduleQueryOptions.where.modId = {
+                $eq: req.query.modId
+            };
+        } else {
+            moduleQueryOptions.where.modId = {
+                $like: '%' + req.query.modId + '%'
+            };
+        }
+    }
 
     Module.findAll(moduleQueryOptions).then((rawModules) => {
         let modules = rawModules.map((rawModule) => {
@@ -186,62 +215,6 @@ app.get('/getModules', (req, res) => {
         res.json({
             modules: modules
         });
-    });
-});
-
-// get specific module
-app.get('/getModule/:modId', (req, res) => {
-    Module.findOne({ 
-        where: {
-            modId: req.params.modId
-        }
-    }).then((rawModule) => {
-        if (rawModule === null) {
-            res.json({
-                module: null
-            });
-        } else {
-            res.json({
-                module: rawModule.dataValues
-            });
-        }
-    });
-});
-
-// get module percentage
-app.get('/getModulePercentage/:modId', (req, res) => {
-
-    let reviewCountPromise = Review.count({
-        where: {
-            modId: req.params.modId
-        }
-    }).then((reviewCount) => {
-        return reviewCount;
-    });
-
-    let recommendReviewCountPromise = Review.count({
-        where: {
-            modId: req.params.modId,
-            recommend: true
-        }
-    }).then((recommendReviewCount) => {
-        return recommendReviewCount;
-    });
-
-    let queryPromises = [reviewCountPromise, recommendReviewCountPromise];
-    Promise.all(queryPromises).then((queryCounts) => {
-        let reviewCount = queryCounts[0];
-        let recommendReviewCount = queryCounts[1];
-
-        if (reviewCount <= 0 || recommendReviewCount <= 0) {
-            res.json({
-                percent: null
-            });
-        } else {
-            res.json({
-                percent: (recommendReviewCount / reviewCount) * 100
-            });
-        }
     });
 });
 
