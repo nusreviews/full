@@ -144,7 +144,7 @@ app.get('/getModulesFullAttribute', (req, res) => {
             };
         } else {
             moduleQueryOptions.where.modId = {
-                $like: '%' + req.query.modId '%'
+                $like: '%' + req.query.modId + '%'
             };
         }
     }
@@ -204,7 +204,7 @@ app.get('/getModules', (req, res) => {
             };
         } else {
             moduleQueryOptions.where.modId = {
-                $like: '%' + req.query.modId '%'
+                $like: '%' + req.query.modId + '%'
             };
         }
     }
