@@ -58,7 +58,6 @@ app.get('/', (req, res) => {
 
 const moduleDefaultLimit = 10;
 const moduleDefaultOffset = 0;
-const moduleDefaultStrict = false;
 
 const moduleMaxLimit = 200;
 
@@ -138,7 +137,7 @@ app.get('/getModulesFullAttribute', (req, res) => {
     };
 
     if (req.query.modId !== undefined) {
-        if (strict || moduleDefaultStrict) {
+        if (strict === "true") {
             moduleQueryOptions.where.modId = {
                 $eq: req.query.modId
             };
@@ -198,7 +197,7 @@ app.get('/getModules', (req, res) => {
     };
 
     if (req.query.modId !== undefined) {
-        if (strict || moduleDefaultStrict) {
+        if (strict === "true") {
             moduleQueryOptions.where.modId = {
                 $eq: req.query.modId
             };
