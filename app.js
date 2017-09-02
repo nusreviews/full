@@ -60,7 +60,7 @@ app.get('/', (req, res) => {
 const moduleDefaultLimit = 10;
 const moduleDefaultOffset = 0;
 
-const moduleMaxLimit = 100;
+const moduleMaxLimit = 200;
 
 // Takes an array of reviews and returns an object that
 // describes the aggregate data (e.g. avg teaching score)
@@ -315,7 +315,7 @@ app.get('/getLikes/:reviewId', (req, res) => {
 const reviewDefaultLimit = 10;
 const reviewDefaultOffset = 0;
 
-const reviewMaxLimit = 100;
+const reviewMaxLimit = 200;
 
 const getReviewLimit = (proposedLimit) => {
     if (Number.isNaN(proposedLimit) || proposedLimit < 0) {
