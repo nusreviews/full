@@ -128,7 +128,10 @@ app.get("/generateServerToken", (req, res) => {
                 fbToken: newFbToken
             };
 
+            console.log(userTokenSubject);
+
             let jwtToken = generateUserToken(userTokenSubject);
+            console.log(jwtToken);
             res.json({
                 token: jwtToken
             });
