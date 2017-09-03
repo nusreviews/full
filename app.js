@@ -89,11 +89,22 @@ const passportFacebookConfig = {
     clientID: config.get('authentication.facebook.clientId'),
     clientSecret: config.get('authentication.facebook.clientSecret'),
     callbackURL: 'https://api.nusreviews.com/auth/facebook/callback',
-    profileFields: ['id', 'displayName', 'email']
+    profileFields: ['id',  'displayName', 'email']
 };
 
 passport.use(new passportFacebook.Strategy(passportFacebookConfig, (accessToken, refreshToken, profile, done) => {
-    console.log(profile);
+    let profilePrimaryEmail = profile.emails[0];
+    let profileDisplayName = profile.displayName;
+    User.findOrCreate({
+        where: {
+            email: profileDisplayName
+        },
+        defaults: {
+            displayName: profileDisplayName
+        }
+    }).then((user) => {
+        return done(null, user);
+    });
 }));
 
 app.get('/auth/facebook/start', passport.authenticate('facebook', { 
