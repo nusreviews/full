@@ -140,21 +140,23 @@ passport.use(new passportJwt.Strategy(passportJWTOptions, function(jwtPayload, d
 
 app.get("/jwtTest", passport.authenticate(["jwt"], { session: false }), (req, res) => {
     res.json({
-        message: req.user
+        message: "success"
     });
 });
 
 
 /******************************** User ************************************* */
-/*
+
 app.get("/profile", passport.authenticate(["jwt"], { session: false }), (req, res) => {
     User.findOne({
         where: {
-            email: 
+            userId: req.user.userId
         }
-    })
+    }).then((rawUser) => {
+        res.json(rawUser.dataValues);
+    });
 });
-*/
+
 
 /****************************** Module ************************************* */
 
