@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const express = require("express");
 const config = require("./config");
 const db = require("./db");
@@ -176,8 +177,7 @@ const aggregateReviewsData = (reviews) => {
         dateUpdated: new Date(0)
     };
 
-    for (let i = 0; i < reviews.length; i++) {
-        let review = reviews[i];
+    reviews.forEach((review) => {
         if (review.recommend) {
             accumulator.totalRecommendations = accumulator.totalRecommendations + 1;
         }
@@ -186,7 +186,7 @@ const aggregateReviewsData = (reviews) => {
         accumulator.totalEnjoyability = accumulator.totalEnjoyability + review.enjoyability;
         accumulator.totalWorkload = accumulator.totalWorkload + review.workload;
         accumulator.dateUpdated = new Date(Math.max(accumulator.dateUpdated, review.updatedAt));
-    }
+    });
 
     let aggregateData = {
         percentage: accumulator.totalRecommendations / reviews.length * 100,
@@ -261,12 +261,9 @@ app.get("/getModulesFullAttribute", (req, res) => {
                 return aggregateReviewsData(reviews);
             });
 
-            let mergedModuleReviewData = [];
-            for (let j = 0; j < aggregateReviewByModuleId.length; j++) {
-                let currentReviewData = aggregateReviewByModuleId[j];
-                let currentModuleData = modules[j];
-                mergedModuleReviewData.push(Object.assign(currentReviewData, currentModuleData));
-            }
+            let mergedModuleReviewData = _.zipWith(modules, aggregateReviewsByModuleId, (currentModuleData, currentReviewData) => {
+                return Object.assign(currentReviewData, currentModuleData);
+            });
 
             res.json({
                 modules: mergedModuleReviewData
@@ -445,12 +442,9 @@ app.get("/getReviews", (req, res) => {
                 };
             });
 
-            let mergedReviewLikeData = [];
-            for (let i = 0; i < reviews.length; i++) {
-                let currentReviewData = reviews[i];
-                let currentLikeData = relevantLikeDataByReviewId[i];
-                mergedReviewLikeData.push(Object.assign(currentLikeData, currentReviewData));
-            }
+            let mergedReviewLikeData = _.zipWith(reviews, relevantLikeDataByReviewId, (currentReviewData, currentLikeData) => {
+                return Object.assign(currentLikeData, currentReviewData);
+            });
 
             res.json({
                 reviews: mergedReviewLikeData
