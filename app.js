@@ -496,8 +496,6 @@ app.post("/review/new", passport.authenticate(["jwt"], { session: false }), (req
     let userTokenSubject = req.user;
     let reviewerId = userTokenSubject.user.userId;
 
-    console.log(req.body);
-
     let modId = req.body.modId;
     let teachingRating = req.body.teaching;
     let difficultyRating = req.body.difficulty;
@@ -506,24 +504,33 @@ app.post("/review/new", passport.authenticate(["jwt"], { session: false }), (req
     let userRecommends = req.body.recommend;
     let userComments = req.body.comments;
 
-    Review.create({
-        modId: modId,
-        reviewBy: reviewerId,
-        taughtBy: null,
-        teaching: teachingRating,
-        difficulty: difficultyRating,
-        enjoyability: enjoyabilityRating,
-        workload: workloadRating,
-        recommend: userRecommends,
-        comments: userComments
-    }).then((sequelizeResponse) => {
-        res.json({
-            status: "success"
-        });
-    }).catch((err) => {
-        res.json({
-            status: "error"
-        });
+    Review.findAll({
+        where: {
+            modId: modId,
+            reviewBy: reviewerId
+        }
+    }).then((rawReviews) => {
+        if (rawReviews.length > 0) {
+            res.json({
+                status: "error"
+            });
+        } else {
+            Review.create({
+                modId: modId,
+                reviewBy: reviewerId,
+                taughtBy: null,
+                teaching: teachingRating,
+                difficulty: difficultyRating,
+                enjoyability: enjoyabilityRating,
+                workload: workloadRating,
+                recommend: userRecommends,
+                comments: userComments
+            }).then((sequelizeResponse) => {
+                res.json({
+                    status: "success"
+                });
+            });
+        }
     });
 });
 
