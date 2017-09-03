@@ -89,7 +89,7 @@ const passportFacebookConfig = {
     clientID: config.get('authentication.facebook.clientId'),
     clientSecret: config.get('authentication.facebook.clientSecret'),
     callbackURL: 'https://api.nusreviews.com/auth/facebook/callback',
-    profileFields: ['id', 'username', 'displayName', 'email']
+    profileFields: ['id', 'displayName', 'email']
 };
 
 passport.use(new passportFacebook.Strategy(passportFacebookConfig, (accessToken, refreshToken, profile, done) => {
