@@ -118,7 +118,7 @@ const passportJWTOptions = {
   audience: config.get('authentication.token.audience')
 };
 
-passport.use(new JwtStrategy(passportJWTOptions, function(jwtPayload, done) {
+passport.use(new passportJwt.Strategy(passportJWTOptions, function(jwtPayload, done) {
     let userPrimaryEmail = jwtPayload.sub;
     User.findOne({
         email: userPrimaryEmail
