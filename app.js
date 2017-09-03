@@ -157,12 +157,6 @@ passport.use(new passportJwt.Strategy(passportJWTOptions, function(jwtPayload, d
     return done(null, userSubjectToken);
 }));
 
-app.get("/jwtTest", passport.authenticate(["jwt"], { session: false }), (req, res) => {
-    res.json({
-        message: "success"
-    });
-});
-
 
 /******************************** User ************************************* */
 
@@ -450,6 +444,13 @@ app.get("/getReviews", (req, res) => {
                 }
             });
         });
+        let userPromises = reviews.map((review) => {
+            return User.findOne({
+                where: {
+                    userId: review.reviewBy
+                }
+            });
+        });
 
         Promise.all(likesPromises).then((rawLikesByReviewId) => {
             let likesByReviewId = rawLikesByReviewId.map((rawLikes) => {
@@ -470,12 +471,20 @@ app.get("/getReviews", (req, res) => {
                 };
             });
 
-            let mergedReviewLikeData = _.zipWith(reviews, relevantLikeDataByReviewId, (currentReviewData, currentLikeData) => {
-                return Object.assign(currentLikeData, currentReviewData);
-            });
+            Promise.all(userPromises).then((rawUsers) => {
+                let relevantUsersData = rawUsers.map((rawUser) => {
+                    return {
+                        reviewer: rawUser.dataValues.displayName
+                    };
+                });
 
-            res.json({
-                reviews: mergedReviewLikeData
+                let mergedReviewLikeData = _.zipWith(reviews, relevantLikeDataByReviewId, relevantUsersData, (currentReviewData, currentLikeData, currentUserData) => {
+                    return Object.assign(currentReviewData, currentLikeData, currentUserData);
+                });
+
+                res.json({
+                    reviews: mergedReviewLikeData
+                });
             });
         });
     });
