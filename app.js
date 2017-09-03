@@ -111,8 +111,7 @@ app.get("/generateServerToken", (req, res) => {
     let fbDisplayName = req.query.name;
 
     exchangeFbToken(fbToken).then((fbResponse) => {
-        console.log(fbResponse);
-        let newFbToken = fbResponse.accessToken;
+        let newFbToken = fbResponse.access_token;
 
         User.findOrCreate({
             where: {
@@ -128,10 +127,7 @@ app.get("/generateServerToken", (req, res) => {
                 fbToken: newFbToken
             };
 
-            console.log(userTokenSubject);
-
             let jwtToken = generateUserToken(userTokenSubject);
-            console.log(jwtToken);
             res.json({
                 token: jwtToken
             });
