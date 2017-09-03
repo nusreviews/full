@@ -261,7 +261,7 @@ app.get("/getModulesFullAttribute", (req, res) => {
                 return aggregateReviewsData(reviews);
             });
 
-            let mergedModuleReviewData = _.zipWith(modules, aggregateReviewsByModuleId, (currentModuleData, currentReviewData) => {
+            let mergedModuleReviewData = _.zipWith(modules, aggregateReviewByModuleId, (currentModuleData, currentReviewData) => {
                 return Object.assign(currentReviewData, currentModuleData);
             });
 
