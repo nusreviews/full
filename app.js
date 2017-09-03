@@ -94,7 +94,7 @@ const passportFacebookConfig = {
 };
 
 passport.use(new passportFacebook.Strategy(passportFacebookConfig, (accessToken, refreshToken, profile, done) => {
-    let profilePrimaryEmail = profile.emails[0];
+    let profilePrimaryEmail = profile.emails[0].value;
     let profileDisplayName = profile.displayName;
     User.findOrCreate({
         where: {
