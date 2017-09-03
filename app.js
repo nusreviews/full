@@ -68,7 +68,7 @@ const generateUserToken = (req, res) => {
         subject: req.user.email
     });
     res.json({
-        token: accessToken
+        token: userToken
     });
 };
 
