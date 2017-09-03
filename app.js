@@ -76,7 +76,7 @@ const generateAccessToken = (userId) => {
 
 const generateUserToken = (req, res) => {
     console.log(req);
-    const accessToken = generateAccessToken(req.user.id);
+    const accessToken = generateAccessToken(req.user.email);
     res.json({
         token: accessToken
     });
@@ -103,7 +103,8 @@ passport.use(new passportFacebook.Strategy(passportFacebookConfig, (accessToken,
         defaults: {
             displayName: profileDisplayName
         }
-    }).then((user) => {
+    }).then((sequelizeResponse) => {
+        let user = sequelizeResponse[0].dataValues;
         return done(null, user);
     });
 }));
