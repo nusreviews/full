@@ -1,6 +1,6 @@
-const db = require('../db');
+const db = require("../db");
 
-const User = db.sequelize.define('user', {
+const User = db.sequelize.define("user", {
   userId: {
     type: db.Sequelize.INTEGER, 
     allowNull: false,

@@ -1,6 +1,6 @@
-const db = require('../db');
+const db = require("../db");
 
-const Review = db.sequelize.define('review', {
+const Review = db.sequelize.define("review", {
   reviewId: {
     type: db.Sequelize.INTEGER, 
     allowNull: false,

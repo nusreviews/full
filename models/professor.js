@@ -1,6 +1,6 @@
-const db = require('../db');
+const db = require("../db");
 
-const Professor = db.sequelize.define('professor', {
+const Professor = db.sequelize.define("professor", {
   profId: {
     type: db.Sequelize.INTEGER, 
     allowNull: false,
