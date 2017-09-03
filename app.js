@@ -107,6 +107,29 @@ app.get('/auth/facebook/callback', passport.authenticate('facebook', {
     session: false 
 }), generateUserToken);
 
+/************************** JWT Authentication ***************************** */
+
+const passportJwt = require('passport-jwt');
+
+const passportJWTOptions = {
+  jwtFromRequest: passportJwt.ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: config.get('authentication.token.secret'),
+  issuer: config.get('authentication.token.issuer'),
+  audience: config.get('authentication.token.audience')
+};
+
+passport.use(new JwtStrategy(passportJWTOptions, function(jwtPayload, done) {
+    let userPrimaryEmail = jwtPayload.sub;
+    User.findOne({
+        email: userPrimaryEmail
+    }).then((user) => {
+        console.log(user.dataValues);
+        return done(null, user);
+    }).catch((err) => {
+        return done(err, null);
+    });
+}));
+
 
 /****************************** Module ************************************* */
 
