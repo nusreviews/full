@@ -74,6 +74,9 @@ const generateUserToken = (req, res) => {
         issuer: issuer,
         subject: req.user.email
     });
+
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Access-Control-Allow-Origin, Origin, X-Requested-With, Content-Type, Accept");
     res.json({
         token: userToken
     });
