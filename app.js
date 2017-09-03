@@ -95,11 +95,11 @@ passport.use(new passportFacebook.Strategy(passportFacebookConfig, (accessToken,
     console.log(profile);
 }));
 
-app.get('/api/authentication/facebook/start', passport.authenticate('facebook', { 
+app.get('/auth/facebook/start', passport.authenticate('facebook', { 
     session: false
 }));
 
-app.get('/api/authentication/facebook/callback', passport.authenticate('facebook', { 
+app.get('/auth/facebook/callback', passport.authenticate('facebook', { 
     session: false 
 }), generateUserToken);
 
