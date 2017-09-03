@@ -46,9 +46,43 @@ User.sync();
 Review.sync();
 Like.sync();
 
-/************************ JWT Authentication ******************************* */
+const app = express();
 
+/*************************** Authentication ******************************** */
+
+const jwt = require('jsonwebtoken');
 const passport = require('passport');
+app.use(passport.initialize());
+
+const generateAccessToken = (userId) => {
+  // How long will the token be valid for
+  const expiresIn = '7d';
+  // Which service issued the token
+  const issuer = config.get('authentication.token.issuer');
+  // Which service is the token intended for
+  const audience = config.get('authentication.token.audience');
+  // The signing key for signing the token
+  const secret = config.get('authentication.token.secret');
+
+  const token = jwt.sign({}, secret, {
+    expiresIn: expiresIn,
+    audience: audience,
+    issuer: issuer,
+    subject: userId.toString()
+  });
+
+  return token;
+};
+
+const generateUserToken = (req, res) => {
+  const accessToken = generateAccessToken(req.user.id);
+  res.json({
+    token: accessToken
+  });
+};
+
+/************************** FB Authentication ****************************** */
+
 const passportFacebook = require('passport-facebook');
 
 const passportFacebookConfig = {
@@ -61,7 +95,14 @@ passport.use(new passportFacebook.Strategy(passportFacebookConfig, (accessToken,
     console.log(profile);
 }));
 
-const app = express();
+app.get('/api/authentication/facebook/start', passport.authenticate('facebook', { 
+    session: false
+}));
+
+app.get('/api/authentication/facebook/callback', passport.authenticate('facebook', { 
+    session: false 
+}), generateUserToken);
+
 
 /****************************** Module ************************************* */
 
