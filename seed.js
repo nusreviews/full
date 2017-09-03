@@ -1,51 +1,51 @@
-const config = require('./config');
-const db = require('./db');
+const config = require("./config");
+const db = require("./db");
 
 /*************************** Associations ********************************** */
-const Like = require('./models/like');
-const Module = require('./models/module');
-const Professor = require('./models/professor');
-const Review = require('./models/review');
-const User = require('./models/user');
+const Like = require("./models/like");
+const Module = require("./models/module");
+const Professor = require("./models/professor");
+const Review = require("./models/review");
+const User = require("./models/user");
 
 Module.hasMany(Review, {
-    as: 'Reviews',
-    foreignKey: 'modId',
-    sourceKey: 'modId'
+    as: "Reviews",
+    foreignKey: "modId",
+    sourceKey: "modId"
 });
 
 Professor.hasMany(Review, {
-    as: 'Reviews',
-    foreignKey: 'taughtBy',
-    sourceKey: 'profId'
+    as: "Reviews",
+    foreignKey: "taughtBy",
+    sourceKey: "profId"
 });
 
 Review.hasMany(Like, {
-    as: 'Likes',
-    foreignKey: 'reviewId',
-    sourceKey: 'reviewId'
+    as: "Likes",
+    foreignKey: "reviewId",
+    sourceKey: "reviewId"
 });
 
 User.hasMany(Like, {
-    as: 'Likes',
-    foreignKey: 'userId',
-    sourceKey: 'userId'
+    as: "Likes",
+    foreignKey: "userId",
+    sourceKey: "userId"
 });
 
 User.hasMany(Review, {
-    as: 'Reviews',
-    foreignKey: 'reviewBy',
-    sourceKey: 'userId'
+    as: "Reviews",
+    foreignKey: "reviewBy",
+    sourceKey: "userId"
 });
 
 
 /******************************* Seed ************************************** */
 
-const likeSeed = require('./seed/like_seed');
-const csModuleSeed = require('./seed/cs_module_seed');
-const professorSeed = require('./seed/professor_seed');
-const reviewSeed = require('./seed/review_seed');
-const userSeed = require('./seed/user_seed');
+const likeSeed = require("./seed/like_seed");
+const csModuleSeed = require("./seed/cs_module_seed");
+const professorSeed = require("./seed/professor_seed");
+const reviewSeed = require("./seed/review_seed");
+const userSeed = require("./seed/user_seed");
 
 // Order is important here
 db.sequelize.dropAllSchemas().then(() => {
@@ -79,8 +79,8 @@ db.sequelize.dropAllSchemas().then(() => {
         return Like.create(like);
     }));
 }).then(() => {
-    console.log('Seeding complete');
-    return undefined;
+    console.log("Seeding complete");
+    process.exit(0);
 }).catch((err) => {
     console.error(err);
 });
