@@ -189,8 +189,9 @@ const passportJWTOptions = {
 };
 
 passport.use(new passportJwt.Strategy(passportJWTOptions, function(jwtPayload, done) {
-    let user = JSON.parse(jwtPayload.sub);
-    return done(null, user);
+    let userSubjectToken = JSON.parse(jwtPayload.sub);
+    console.log(userSubjectToken);
+    return done(null, userSubjectToken);
 }));
 
 app.get("/jwtTest", passport.authenticate(["jwt"], { session: false }), (req, res) => {
@@ -203,6 +204,7 @@ app.get("/jwtTest", passport.authenticate(["jwt"], { session: false }), (req, re
 /******************************** User ************************************* */
 
 app.get("/profile", passport.authenticate(["jwt"], { session: false }), (req, res) => {
+    console.log(req.user);
     res.json(req.user);
 });
 
