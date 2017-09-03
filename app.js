@@ -507,7 +507,7 @@ app.get("/profile", passport.authenticate(["jwt"], { session: false }), (req, re
 const port = config.get("http.port");
 const ip = config.get("http.ip");
 
-app.listen("3000", "127.0.0.1", ()=>{
+app.listen("3000", "127.0.0.1", () => {
     console.log("Server started on port 3000");
 });
 

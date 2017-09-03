@@ -1,6 +1,6 @@
 const reviewSeed = [
     {
-        modId: 'CS1010',
+        modId: "CS1010",
         reviewBy: 2,
         taughtBy: 1,
         teaching: 5,
@@ -11,7 +11,7 @@ const reviewSeed = [
         comments: "hi"
     },
     {
-        modId: 'CS1010',
+        modId: "CS1010",
         reviewBy: 3,
         taughtBy: 1,
         teaching: 2,
@@ -22,7 +22,7 @@ const reviewSeed = [
         comments: "hi 2"
     },
     {
-        modId: 'CS1010',
+        modId: "CS1010",
         reviewBy: 3,
         taughtBy: 1,
         teaching: 1,
@@ -33,7 +33,7 @@ const reviewSeed = [
         comments: "hi 3"
     },
     {
-        modId: 'CS1020',
+        modId: "CS1020",
         reviewBy: 2,
         taughtBy: 2,
         teaching: 5,
@@ -44,7 +44,7 @@ const reviewSeed = [
         comments: "hi"
     },
     {
-        modId: 'CS1020',
+        modId: "CS1020",
         reviewBy: 3,
         taughtBy: 2,
         teaching: 2,
@@ -55,7 +55,7 @@ const reviewSeed = [
         comments: "hi 2"
     },
     {
-        modId: 'CS1020',
+        modId: "CS1020",
         reviewBy: 3,
         taughtBy: 2,
         teaching: 1,
@@ -66,7 +66,7 @@ const reviewSeed = [
         comments: "hi 3"
     },
     {
-        modId: 'CS1231',
+        modId: "CS1231",
         reviewBy: 2,
         taughtBy: 3,
         teaching: 5,
@@ -77,7 +77,7 @@ const reviewSeed = [
         comments: "hi"
     },
     {
-        modId: 'CS1231',
+        modId: "CS1231",
         reviewBy: 3,
         taughtBy: 3,
         teaching: 2,
@@ -88,7 +88,7 @@ const reviewSeed = [
         comments: "hi 2"
     },
     {
-        modId: 'CS1231',
+        modId: "CS1231",
         reviewBy: 3,
         taughtBy: 3,
         teaching: 1,
@@ -98,7 +98,7 @@ const reviewSeed = [
         recommend: true,
         comments: "hi 3"
     }, {
-        modId: 'CS2100',
+        modId: "CS2100",
         reviewBy: 3,
         taughtBy: 3,
         teaching: 1,
