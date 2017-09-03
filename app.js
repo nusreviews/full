@@ -54,28 +54,19 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 app.use(passport.initialize());
 
-const generateAccessToken = (userEmail) => {
-    // How long will the token be valid for
+const generateUserToken = (req, res) => {
+
     const expiresIn = '7d';
-    // Which service issued the token
     const issuer = config.get('authentication.token.issuer');
-    // Which service is the token intended for
     const audience = config.get('authentication.token.audience');
-    // The signing key for signing the token
     const secret = config.get('authentication.token.secret');
 
-    const token = jwt.sign({}, secret, {
+    let userToken = jwt.sign({}, secret, {
         expiresIn: expiresIn,
         audience: audience,
         issuer: issuer,
-        subject: userEmail
+        subject: req.user.email
     });
-
-    return token;
-};
-
-const generateUserToken = (req, res) => {
-    const accessToken = generateAccessToken(req.user.email);
     res.json({
         token: accessToken
     });
