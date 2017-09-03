@@ -506,7 +506,7 @@ app.post("/review/new", passport.authenticate(["jwt"], { session: false }), (req
 
     Review.create({
         modId: modId,
-        reviewBy: reviewBy,
+        reviewBy: reviewerId,
         taughtBy: null,
         teaching: teachingRating,
         difficulty: difficultyRating,
