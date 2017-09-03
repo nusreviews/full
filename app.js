@@ -189,16 +189,8 @@ const passportJWTOptions = {
 };
 
 passport.use(new passportJwt.Strategy(passportJWTOptions, function(jwtPayload, done) {
-    let userPrimaryEmail = jwtPayload.sub;
-    User.findOne({
-        where: {
-            email: userPrimaryEmail
-        }
-    }).then((user) => {
-        return done(null, user);
-    }).catch((err) => {
-        return done(err, null);
-    });
+    let user = JSON.parse(jwtPayload.sub);
+    return done(null, user);
 }));
 
 app.get("/jwtTest", passport.authenticate(["jwt"], { session: false }), (req, res) => {
