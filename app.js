@@ -1,42 +1,42 @@
-const express = require('express');
-const config = require('./config');
-const db = require('./db');
+const express = require("express");
+const config = require("./config");
+const db = require("./db");
 
 /*************************** Associations ********************************** */
-const Like = require('./models/like');
-const Module = require('./models/module');
-const Professor = require('./models/professor');
-const Review = require('./models/review');
-const User = require('./models/user');
+const Like = require("./models/like");
+const Module = require("./models/module");
+const Professor = require("./models/professor");
+const Review = require("./models/review");
+const User = require("./models/user");
 
 Module.hasMany(Review, {
-    as: 'Reviews',
-    foreignKey: 'modId',
-    sourceKey: 'modId'
+    as: "Reviews",
+    foreignKey: "modId",
+    sourceKey: "modId"
 });
 
 Professor.hasMany(Review, {
-    as: 'Reviews',
-    foreignKey: 'taughtBy',
-    sourceKey: 'profId'
+    as: "Reviews",
+    foreignKey: "taughtBy",
+    sourceKey: "profId"
 });
 
 Review.hasMany(Like, {
-    as: 'Likes',
-    foreignKey: 'reviewId',
-    sourceKey: 'reviewId'
+    as: "Likes",
+    foreignKey: "reviewId",
+    sourceKey: "reviewId"
 });
 
 User.hasMany(Like, {
-    as: 'Likes',
-    foreignKey: 'userId',
-    sourceKey: 'userId'
+    as: "Likes",
+    foreignKey: "userId",
+    sourceKey: "userId"
 });
 
 User.hasMany(Review, {
-    as: 'Reviews',
-    foreignKey: 'reviewBy',
-    sourceKey: 'userId'
+    as: "Reviews",
+    foreignKey: "reviewBy",
+    sourceKey: "userId"
 });
 
 // Order is important here
@@ -48,11 +48,102 @@ Like.sync();
 
 const app = express();
 
-app.get('/', (req, res) => {
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
+/*************************** Authentication ******************************** */
+
+const jwt = require("jsonwebtoken");
+const passport = require("passport");
+app.use(passport.initialize());
+
+const generateUserToken = (req, res) => {
+
+    const expiresIn = "7d";
+    const issuer = config.get("authentication.token.issuer");
+    const audience = config.get("authentication.token.audience");
+    const secret = config.get("authentication.token.secret");
+
+    let userToken = jwt.sign({}, secret, {
+        expiresIn: expiresIn,
+        audience: audience,
+        issuer: issuer,
+        subject: req.user.email
+    });
     res.json({
-        message: "Hello World"
+        token: userToken
+    });
+};
+
+/************************** FB Authentication ****************************** */
+
+const passportFacebook = require("passport-facebook");
+
+const passportFacebookConfig = {
+    clientID: config.get("authentication.facebook.clientId"),
+    clientSecret: config.get("authentication.facebook.clientSecret"),
+    callbackURL: "https://api.nusreviews.com/auth/facebook/callback",
+    profileFields: ["id",  "displayName", "email"]
+};
+
+passport.use(new passportFacebook.Strategy(passportFacebookConfig, (accessToken, refreshToken, profile, done) => {
+    let profilePrimaryEmail = profile.emails[0].value;
+    let profileDisplayName = profile.displayName;
+    User.findOrCreate({
+        where: {
+            email: profilePrimaryEmail
+        },
+        defaults: {
+            displayName: profileDisplayName
+        }
+    }).then((sequelizeResponse) => {
+        let user = sequelizeResponse[0].dataValues;
+        return done(null, user);
+    });
+}));
+
+app.get("/auth/facebook/start", passport.authenticate("facebook", { 
+    session: false
+}));
+
+app.get("/auth/facebook/callback", passport.authenticate("facebook", { 
+    session: false 
+}), generateUserToken);
+
+/************************** JWT Authentication ***************************** */
+
+const passportJwt = require("passport-jwt");
+
+const passportJWTOptions = {
+  jwtFromRequest: passportJwt.ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: config.get("authentication.token.secret"),
+  issuer: config.get("authentication.token.issuer"),
+  audience: config.get("authentication.token.audience")
+};
+
+passport.use(new passportJwt.Strategy(passportJWTOptions, function(jwtPayload, done) {
+    let userPrimaryEmail = jwtPayload.sub;
+    User.findOne({
+        where: {
+            email: userPrimaryEmail
+        }
+    }).then((user) => {
+        console.log(user.dataValues);
+        return done(null, user);
+    }).catch((err) => {
+        return done(err, null);
+    });
+}));
+
+app.get("/jwtTest", passport.authenticate(["jwt"], { session: false }), (req, res) => {
+    res.json({
+        message: "success"
     });
 });
+
 
 /****************************** Module ************************************* */
 
@@ -125,7 +216,7 @@ const getModuleOffset = (proposedOffset) => {
     }
 };
 
-app.get('/getModulesFullAttribute', (req, res) => {
+app.get("/getModulesFullAttribute", (req, res) => {
     let limit = getModuleLimit(Number(req.query.limit));
     let offset = getModuleOffset(Number(req.query.offset));
     let strict = req.query.strict;
@@ -185,7 +276,7 @@ app.get('/getModulesFullAttribute', (req, res) => {
 });
 
 // get all modules
-app.get('/getModules', (req, res) => {
+app.get("/getModules", (req, res) => {
     let limit = getModuleLimit(Number(req.query.limit));
     let offset = getModuleOffset(Number(req.query.offset));
     let strict = req.query.strict;
@@ -219,13 +310,13 @@ app.get('/getModules', (req, res) => {
 });
 
 // get latest review date of module
-app.get('/getLatestReviewDate/:modId', (req, res) => {
+app.get("/getLatestReviewDate/:modId", (req, res) => {
     Review.findOne({
         where: {
             modId: req.params.modId
         }, 
         order: [
-            ['createdAt', 'DESC']
+            ["createdAt", "DESC"]
         ]
     }).then((rawReview) => {
         if (rawReview === null) {
@@ -244,7 +335,7 @@ app.get('/getLatestReviewDate/:modId', (req, res) => {
 
 
 // get All Professor
-app.get('/getProfessors', (req, res) =>{
+app.get("/getProfessors", (req, res) =>{
     Professor.findAll().then((rawProfessors) => {
         let professors = rawProfessors.map((rawProfessor) => {
             return rawProfessor.dataValues;
@@ -256,7 +347,7 @@ app.get('/getProfessors', (req, res) =>{
 });
 
 // get a prof
-app.get('/getProfessor/:id', (req, res) => {
+app.get("/getProfessor/:id", (req, res) => {
     Professor.findOne({
         where: {
             profId: req.params.profId
@@ -278,7 +369,7 @@ app.get('/getProfessor/:id', (req, res) => {
 
 /*
 // get likes of a review
-app.get('/getLikes/:reviewId', (req, res) => {
+app.get("/getLikes/:reviewId", (req, res) => {
     let sql = `select count(*) as amount from user, review, liked where user.userId = liked.userId and review.reviewId = liked.reviewId and liked.reviewId = ${req.params.reviewId}`;
     querySql(sql, (result) =>{res.send(result);});
 });
@@ -306,7 +397,7 @@ const getReviewOffset = (proposedOffset) => {
 };
 
 // Fetch reviews and modify behavior by query parameters
-app.get('/getReviews', (req, res) => {
+app.get("/getReviews", (req, res) => {
     let limit = getReviewLimit(Number(req.query.limit));
     let offset = getReviewOffset(Number(req.query.offset));
     let reviewQueryOptions = {
@@ -372,7 +463,7 @@ app.get('/getReviews', (req, res) => {
 // Should be a post request
 /*
 // insert review
-app.get('/insertReview/:modId/:reviewBy/:taughtBy/:teaching/:difficulty/:enjoyability/:workload/:recommend/:comments', (req, res) =>{
+app.get("/insertReview/:modId/:reviewBy/:taughtBy/:teaching/:difficulty/:enjoyability/:workload/:recommend/:comments", (req, res) =>{
     let sql = `insert into review (modId, reviewBy, taughtBy, teaching, difficulty, enjoyability, workload, recommend, comments) 
     values ("${req.params.modId}", ${req.params.reviewBy}, ${req.params.taughtBy}, ${req.params.teaching}, ${req.params.difficulty}, ${req.params.enjoyability}, ${req.params.workload}, ${req.params.recommend}, "${req.params.comments}")`;
     querySql(sql, (result) =>{res.send(result);});
@@ -380,28 +471,28 @@ app.get('/insertReview/:modId/:reviewBy/:taughtBy/:teaching/:difficulty/:enjoyab
 
 /****************************** Specific function ************************************* */
 /*
-let sql_getModulesPercentage = 'select numRecommend.modId, floor((numRecommend/totalReview)*100) as percentage from ' + 
-                                '(select modId, count(*) as numRecommend from review where recommend = true group by modId) as numRecommend, ' +
-                                '(select modId, count(*) as totalReview from review group by modId) as numReview ' +
-                                'where numRecommend.modId = numReview.modId';
+let sql_getModulesPercentage = "select numRecommend.modId, floor((numRecommend/totalReview)*100) as percentage from " + 
+                                "(select modId, count(*) as numRecommend from review where recommend = true group by modId) as numRecommend, " +
+                                "(select modId, count(*) as totalReview from review group by modId) as numReview " +
+                                "where numRecommend.modId = numReview.modId";
 
-let sql_getModulesAvgRatings = 'select teachingTable.modId, totalTeaching/totalReview as avgTeaching, totalDifficulty/totalReview as avgDifficulty, totalEnjoyability/totalReview as avgEnjoyability, totalWorkload/totalReview as avgWorkload ' +
-                                'from (select modId, sum(teaching) as totalTeaching, sum(difficulty) as totalDifficulty, sum(enjoyability) as totalEnjoyability, sum(workload) as totalWorkLoad from review group by modId) as teachingTable, ' +
-                                '(select modId, count(*) as totalReview from review group by modId) as numReview ' +
-                                'where numReview.modId = teachingTable.modId';
+let sql_getModulesAvgRatings = "select teachingTable.modId, totalTeaching/totalReview as avgTeaching, totalDifficulty/totalReview as avgDifficulty, totalEnjoyability/totalReview as avgEnjoyability, totalWorkload/totalReview as avgWorkload " +
+                                "from (select modId, sum(teaching) as totalTeaching, sum(difficulty) as totalDifficulty, sum(enjoyability) as totalEnjoyability, sum(workload) as totalWorkLoad from review group by modId) as teachingTable, " +
+                                "(select modId, count(*) as totalReview from review group by modId) as numReview " +
+                                "where numReview.modId = teachingTable.modId";
 
-let sql_getLatestModified = 'SELECT modId, dateUpdated FROM review  group by modId ORDER BY dateUpdated DESC';
+let sql_getLatestModified = "SELECT modId, dateUpdated FROM review  group by modId ORDER BY dateUpdated DESC";
 
-let sql_getModuleFull = 'select module.modId, name, description, percentageTable.percentage, rateTable.avgTeaching, rateTable.avgDifficulty, rateTable.avgEnjoyability, rateTable.avgWorkload, dateT.dateUpdated from module ' +
-                        'left join (' + sql_getModulesPercentage + ') as percentageTable on module.modId = percentageTable.modId ' +
-                        'left join (' + sql_getModulesAvgRatings + ') as rateTable on module.modId = rateTable.modId ' +
-                        'left join (' + sql_getLatestModified + ') as dateT on module.modId = dateT.modId';
+let sql_getModuleFull = "select module.modId, name, description, percentageTable.percentage, rateTable.avgTeaching, rateTable.avgDifficulty, rateTable.avgEnjoyability, rateTable.avgWorkload, dateT.dateUpdated from module " +
+                        "left join (" + sql_getModulesPercentage + ") as percentageTable on module.modId = percentageTable.modId " +
+                        "left join (" + sql_getModulesAvgRatings + ") as rateTable on module.modId = rateTable.modId " +
+                        "left join (" + sql_getLatestModified + ") as dateT on module.modId = dateT.modId";
 
 
 
 // get all modules with full attribute
-app.get('/getModulesFullAttribute', (req, res) =>{
-    let testSql = 'SELECT modId, date(dateUpdated) as test FROM review  group by modId ORDER BY dateUpdated DESC ;';
+app.get("/getModulesFullAttribute", (req, res) =>{
+    let testSql = "SELECT modId, date(dateUpdated) as test FROM review  group by modId ORDER BY dateUpdated DESC ;";
     querySql(sql_getModuleFull, (result) =>{
         res.send(result);
         console.log(result);
@@ -409,25 +500,25 @@ app.get('/getModulesFullAttribute', (req, res) =>{
 });
 
 
-app.get('/profile', passport.authenticate(['jwt'], { session: false }), (req, res) => {
+app.get("/profile", passport.authenticate(["jwt"], { session: false }), (req, res) => {
     res.json(req.user);
 });
 */
-const port = config.get('http.port');
-const ip = config.get('http.ip');
+const port = config.get("http.port");
+const ip = config.get("http.ip");
 
-app.listen('3000', '127.0.0.1', ()=>{
-    console.log('Server started on port 3000');
+app.listen("3000", "127.0.0.1", ()=>{
+    console.log("Server started on port 3000");
 });
 
 /*
 app.use(passport.initialize());
 
-app.get('/auth/facebook', 
-    passport.authenticate('facebook', { session: false }));
+app.get("/auth/facebook", 
+    passport.authenticate("facebook", { session: false }));
 
-app.get('/auth/facebook/callback', 
-    passport.authenticate('facebook', { session: false }), generateUserToken);
+app.get("/auth/facebook/callback", 
+    passport.authenticate("facebook", { session: false }), generateUserToken);
 */
 
 
@@ -441,7 +532,7 @@ const generateUserToken = (req, res) => {
 */
 
 /*
-app.get('/profile', passport.authenticate(['jwt'], { session: false }), (req, res) => {
+app.get("/profile", passport.authenticate(["jwt"], { session: false }), (req, res) => {
     res.json(req.user);
 });
 */

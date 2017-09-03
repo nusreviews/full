@@ -1,32 +1,18 @@
 const userSeed = [
     {
-        firstName: 'Ta Eu',
-        lastName: 'Lim',
+        displayName: 'Lim Ta Eu',
         email: 'limtaeu@nusreviews.com'
     },
     {
-        firstName: 'Benedict',
-        lastName: 'Chua',
-        email: 'benedictchua@gmail.com'
-    },
-    {
-        firstName: 'Baron',
-        lastName: 'Lim',
-        email: 'baronlim@gmail.com'
-    },
-    {
-        firstName: 'Jane',
-        lastName: 'See',
+        displayName: 'Jane See',
         email: 'janesee@nusreviews.com'
     },
     {
-        firstName: 'Sam',
-        lastName: 'See',
+        displayName: 'Sam See',
         email: 'samsee@nusreviews.com'
     },
     {
-        firstName: 'Curtis',
-        lastName: 'Tan',
+        displayName: 'Curtis Tan',
         email: 'curtistan@nusreviews.com'
     }
 ];

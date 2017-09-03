@@ -1,16 +1,16 @@
-const convict = require('convict');
+const convict = require("convict");
 
 const config = convict({
     http: {
         port: {
-            doc: 'The port to listen on',
+            doc: "The port to listen on",
             default: 3000,
-            env: 'PORT'
+            env: "PORT"
         }, 
         ip: {
-            doc: 'The ip to listen on', 
-            default: '127.0.0.1', 
-            env: 'IP'
+            doc: "The ip to listen on", 
+            default: "127.0.0.1", 
+            env: "IP"
         }
     },
     authentication: {
@@ -28,46 +28,46 @@ const config = convict({
         },
         token: {
             secret: {
-                doc: 'The signing key for the JWT',
-                default: '$rE3@wQ1',
-                env: 'JWT_SIGNING_KEY'
+                doc: "The signing key for the JWT",
+                default: "$rE3@wQ1",
+                env: "JWT_SIGNING_KEY"
             },
             issuer: {
-                doc: 'The issuer for the JWT',
-                default: 'social-logins-spa'
+                doc: "The issuer for the JWT",
+                default: "api.nusreviews.com"
             },
             audience: {
-                doc: 'The audience for the JWT',
-                default: 'social-logins-spa'
+                doc: "The audience for the JWT",
+                default: "nusreviews.com"
             }
         }
     }, 
     database: {
         mysql: {
             name: {
-                doc: 'The name of the database',
-                default: 'nusreviews',
-                env: 'MYSQL_DATABASE'
+                doc: "The name of the database",
+                default: "nusreviews",
+                env: "MYSQL_DATABASE"
             },
             port: {
-                doc: 'The port to listen to',
+                doc: "The port to listen to",
                 default: 3306,
-                env: 'MYSQL_PORT'
+                env: "MYSQL_PORT"
             }, 
             host: {
-                doc: 'The host to listen to', 
-                default: '127.0.0.1',
-                env: 'MYSQL_HOST'
+                doc: "The host to listen to", 
+                default: "127.0.0.1",
+                env: "MYSQL_HOST"
             },
             user: {
-                doc: 'The user for database login',
-                default: 'root',
-                env: 'MYSQL_USER'
+                doc: "The user for database login",
+                default: "root",
+                env: "MYSQL_USER"
             }, 
             password: {
-                doc: 'The password for database login', 
-                default: 'limtaeu', 
-                env: 'MYSQL_PASSWORD'
+                doc: "The password for database login", 
+                default: "limtaeu", 
+                env: "MYSQL_PASSWORD"
             }
         }
     }
