@@ -51,17 +51,18 @@ const app = express();
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Access-Control-Allow-Origin, Authorization, Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
 
 /*************************** Authentication ******************************** */
 
+const https = require("https");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
 app.use(passport.initialize());
 
-const generateUserToken = (req, res) => {
+const generateUserToken = (userTokenSubject) => {
 
     const expiresIn = "7d";
     const issuer = config.get("authentication.token.issuer");
@@ -72,47 +73,73 @@ const generateUserToken = (req, res) => {
         expiresIn: expiresIn,
         audience: audience,
         issuer: issuer,
-        subject: req.user.email
+        subject: JSON.stringify(userTokenSubject)
     });
-    res.json({
-        token: userToken
+
+    return userToken;
+};
+
+const fbClientId = config.get("authentication.facebook.clientId");
+const fbClientSecret = config.get("authentication.facebook.clientSecret");
+
+const exchangeFbToken = (fbToken) => {
+    let query = "?grant_type=fb_exchange_token&client_id=" + fbClientId + 
+        "&client_secret=" + fbClientSecret + "&fb_exchange_token=" + fbToken;
+
+    return new Promise((resolve, reject) => {
+        https.get("https://graph.facebook.com/oauth/access_token" + query, (res) => {
+            if (res.statusCode !== 200) {
+                reject("Got status code " + res.statuscode + " while exchanging fb token");
+            } else {
+                let responseData = "";
+                res.on("data", (dataChunk) => {
+                    responseData = responseData + dataChunk;
+                });
+                res.on("end", () => {
+                    resolve(responseData);
+                });
+            }
+        }).on("error", (err) => {
+            reject(err);
+        });
     });
 };
 
-/************************** FB Authentication ****************************** */
+app.get("/generateServerToken", (req, res) => {
+    let fbToken = req.query.fbToken;
+    let fbPrimaryEmail = req.query.email;
+    let fbDisplayName = req.query.name;
 
-const passportFacebook = require("passport-facebook");
+    exchangeFbToken(fbToken).then((fbResponseJSON) => {
+        let fbResponse = JSON.parse(fbResponseJSON);
+        let newFbToken = fbResponse.access_token;
 
-const passportFacebookConfig = {
-    clientID: config.get("authentication.facebook.clientId"),
-    clientSecret: config.get("authentication.facebook.clientSecret"),
-    callbackURL: "https://api.nusreviews.com/auth/facebook/callback",
-    profileFields: ["id",  "displayName", "email"]
-};
+        User.findOrCreate({
+            where: {
+                email: fbPrimaryEmail
+            },
+            defaults: {
+                displayName: fbDisplayName
+            }
+        }).then((sequelizeResponse) => {
+            let user = sequelizeResponse[0].dataValues;
+            let userTokenSubject = {
+                user: user,
+                fbToken: newFbToken
+            };
 
-passport.use(new passportFacebook.Strategy(passportFacebookConfig, (accessToken, refreshToken, profile, done) => {
-    let profilePrimaryEmail = profile.emails[0].value;
-    let profileDisplayName = profile.displayName;
-    User.findOrCreate({
-        where: {
-            email: profilePrimaryEmail
-        },
-        defaults: {
-            displayName: profileDisplayName
-        }
-    }).then((sequelizeResponse) => {
-        let user = sequelizeResponse[0].dataValues;
-        return done(null, user);
+            let jwtToken = generateUserToken(userTokenSubject);
+            res.json({
+                token: jwtToken
+            });
+        });
+    }).catch((err) => {
+        res.json({
+            token: null
+        });
     });
-}));
+});
 
-app.get("/auth/facebook/start", passport.authenticate("facebook", { 
-    session: false
-}));
-
-app.get("/auth/facebook/callback", passport.authenticate("facebook", { 
-    session: false 
-}), generateUserToken);
 
 /************************** JWT Authentication ***************************** */
 
@@ -126,21 +153,23 @@ const passportJWTOptions = {
 };
 
 passport.use(new passportJwt.Strategy(passportJWTOptions, function(jwtPayload, done) {
-    let userPrimaryEmail = jwtPayload.sub;
-    User.findOne({
-        where: {
-            email: userPrimaryEmail
-        }
-    }).then((user) => {
-        return done(null, user);
-    }).catch((err) => {
-        return done(err, null);
-    });
+    let userSubjectToken = JSON.parse(jwtPayload.sub);
+    return done(null, userSubjectToken);
 }));
 
 app.get("/jwtTest", passport.authenticate(["jwt"], { session: false }), (req, res) => {
     res.json({
         message: "success"
+    });
+});
+
+
+/******************************** User ************************************* */
+
+app.get("/profile", passport.authenticate(["jwt"], { session: false }), (req, res) => {
+    let userTokenSubject = req.user;
+    res.json({
+        user: userTokenSubject.user
     });
 });
 
