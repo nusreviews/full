@@ -48,6 +48,8 @@ Review.sync();
 Like.sync();
 
 const app = express();
+const bodyParser = require("body-parser");
+app.use(bodyParser.json());
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -487,6 +489,48 @@ app.get("/getReviews", (req, res) => {
                 });
             });
         });
+    });
+});
+
+app.post("/review/new", passport.authenticate(["jwt"], { session: false }), (req, res) => {
+    let userTokenSubject = req.user;
+    let reviewerId = userTokenSubject.user.userId;
+
+    let modId = req.body.modId;
+    let teachingRating = req.body.teaching;
+    let difficultyRating = req.body.difficulty;
+    let enjoyabilityRating = req.body.enjoyability;
+    let workloadRating = req.body.workload;
+    let userRecommends = req.body.recommend;
+    let userComments = req.body.comments;
+
+    Review.findAll({
+        where: {
+            modId: modId,
+            reviewBy: reviewerId
+        }
+    }).then((rawReviews) => {
+        if (rawReviews.length > 0) {
+            res.json({
+                status: "error"
+            });
+        } else {
+            Review.create({
+                modId: modId,
+                reviewBy: reviewerId,
+                taughtBy: null,
+                teaching: teachingRating,
+                difficulty: difficultyRating,
+                enjoyability: enjoyabilityRating,
+                workload: workloadRating,
+                recommend: userRecommends,
+                comments: userComments
+            }).then((sequelizeResponse) => {
+                res.json({
+                    status: "success"
+                });
+            });
+        }
     });
 });
 
