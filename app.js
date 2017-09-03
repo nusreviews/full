@@ -113,8 +113,6 @@ app.get("/generateServerToken", (req, res) => {
     exchangeFbToken(fbToken).then((fbResponseJSON) => {
         let fbResponse = JSON.parse(fbResponseJSON);
         let newFbToken = fbResponse.access_token;
-        console.log(fbResponse);
-        console.log(newFbToken);
 
         User.findOrCreate({
             where: {
@@ -142,42 +140,6 @@ app.get("/generateServerToken", (req, res) => {
     });
 });
 
-/************************** FB Authentication ****************************** */
-
-/*
-const passportFacebook = require("passport-facebook");
-
-const passportFacebookConfig = {
-    clientID: config.get("authentication.facebook.clientId"),
-    clientSecret: config.get("authentication.facebook.clientSecret"),
-    callbackURL: "https://api.nusreviews.com/auth/facebook/callback",
-    profileFields: ["id",  "displayName", "email"]
-};
-
-passport.use(new passportFacebook.Strategy(passportFacebookConfig, (accessToken, refreshToken, profile, done) => {
-    let profilePrimaryEmail = profile.emails[0].value;
-    let profileDisplayName = profile.displayName;
-    User.findOrCreate({
-        where: {
-            email: profilePrimaryEmail
-        },
-        defaults: {
-            displayName: profileDisplayName
-        }
-    }).then((sequelizeResponse) => {
-        let user = sequelizeResponse[0].dataValues;
-        return done(null, user);
-    });
-}));
-
-app.get("/auth/facebook/start", passport.authenticate("facebook", { 
-    session: false
-}));
-
-app.get("/auth/facebook/callback", passport.authenticate("facebook", { 
-    session: false 
-}), generateUserToken);
-*/
 
 /************************** JWT Authentication ***************************** */
 
@@ -206,8 +168,10 @@ app.get("/jwtTest", passport.authenticate(["jwt"], { session: false }), (req, re
 /******************************** User ************************************* */
 
 app.get("/profile", passport.authenticate(["jwt"], { session: false }), (req, res) => {
-    console.log(req.user);
-    res.json(req.user);
+    let userTokenSubject = JSON.parse(req.user);
+    res.json({
+        user: userTokenSubject.user;
+    });
 });
 
 
