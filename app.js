@@ -474,7 +474,7 @@ app.get("/getReviews", (req, res) => {
             Promise.all(userPromises).then((rawUsers) => {
                 let relevantUsersData = rawUsers.map((rawUser) => {
                     return {
-                        reviewer: rawUser.dataValues.name;
+                        reviewer: rawUser.dataValues.name
                     };
                 });
 
