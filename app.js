@@ -496,6 +496,8 @@ app.post("/review/new", passport.authenticate(["jwt"], { session: false }), (req
     let userTokenSubject = req.user;
     let reviewerId = userTokenSubject.user.userId;
 
+    console.log(req.body);
+
     let modId = req.body.modId;
     let teachingRating = req.body.teaching;
     let difficultyRating = req.body.difficulty;
