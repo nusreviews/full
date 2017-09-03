@@ -111,6 +111,7 @@ app.get("/generateServerToken", (req, res) => {
     let fbDisplayName = req.query.name;
 
     exchangeFbToken(fbToken).then((fbResponse) => {
+        console.log(fbResponse);
         let newFbToken = fbResponse.accessToken;
 
         User.findOrCreate({
