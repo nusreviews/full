@@ -57,11 +57,12 @@ app.use((req, res, next) => {
 
 /*************************** Authentication ******************************** */
 
+const https = require("https");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
 app.use(passport.initialize());
 
-const generateUserToken = (req, res) => {
+const generateUserToken = (userTokenSubject) => {
 
     const expiresIn = "7d";
     const issuer = config.get("authentication.token.issuer");
@@ -72,18 +73,76 @@ const generateUserToken = (req, res) => {
         expiresIn: expiresIn,
         audience: audience,
         issuer: issuer,
-        subject: req.user.email
+        subject: JSON.stringify(userTokenSubject)
     });
 
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Access-Control-Allow-Origin, Origin, X-Requested-With, Content-Type, Accept");
-    res.json({
-        token: userToken
+    return userToken;
+};
+
+const fbClientId = config.get("authentication.facebook.clientId");
+const fbClientSecret = config.get("authentication.facebook.clientSecret");
+
+const exchangeFbToken = (fbToken) => {
+    let query = "?grant_type=fb_exchange_token&client_id=" + fbClientId + 
+        "&client_secret=" + fbClientSecret + "&fb_exchange_token=" + fbToken;
+
+    return new Promise((resolve, reject) => {
+        https.get("https://graph.facebook.com/oauth/access_token" + query, (res) => {
+            if (res.statusCode !== 200) {
+                reject("Got status code " + res.statuscode + " while exchanging fb token");
+            } else {
+                let responseData = "";
+                res.on("data", (dataChunk) => {
+                    responseData = responseData + dataChunk;
+                });
+                res.on("end", () => {
+                    resolve(responseData);
+                });
+            }
+            resolve(res);
+        }).on("error", (err) => {
+            reject(err);
+        });
     });
 };
 
+app.get("/generateServerToken", (req, res) => {
+    let fbToken = req.query.fbToken;
+    let fbPrimaryEmail = req.query.email;
+    let fbDisplayName = req.query.name;
+
+    exchangeFbToken(fbToken).then((fbResponse) => {
+        let newFbToken = fbResponse.accessToken;
+
+        User.findOrCreate({
+            where: {
+                email: fbPrimaryEmail
+            },
+            defaults: {
+                displayName: fbDisplayName
+            }
+        }).then((sequelizeResponse) => {
+            let user = sequelizeResponse[0].dataValues;
+            let userTokenSubject = {
+                user: user,
+                fbToken: newFbToken
+            };
+
+            let jwtToken = generateUserToken(userTokenSubject);
+            res.json({
+                token: jwtToken
+            });
+        });
+    }).catch((err) => {
+        res.json({
+            token: null
+        });
+    });
+});
+
 /************************** FB Authentication ****************************** */
 
+/*
 const passportFacebook = require("passport-facebook");
 
 const passportFacebookConfig = {
@@ -116,6 +175,7 @@ app.get("/auth/facebook/start", passport.authenticate("facebook", {
 app.get("/auth/facebook/callback", passport.authenticate("facebook", { 
     session: false 
 }), generateUserToken);
+*/
 
 /************************** JWT Authentication ***************************** */
 
@@ -151,15 +211,7 @@ app.get("/jwtTest", passport.authenticate(["jwt"], { session: false }), (req, re
 /******************************** User ************************************* */
 
 app.get("/profile", passport.authenticate(["jwt"], { session: false }), (req, res) => {
-    User.findOne({
-        where: {
-            userId: req.user.userId
-        }
-    }).then((rawUser) => {
-        res.json({
-            user: rawUser.dataValues
-        });
-    });
+    res.json(req.user);
 });
 
 
