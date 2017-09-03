@@ -132,7 +132,6 @@ passport.use(new passportJwt.Strategy(passportJWTOptions, function(jwtPayload, d
             email: userPrimaryEmail
         }
     }).then((user) => {
-        console.log(user.dataValues);
         return done(null, user);
     }).catch((err) => {
         return done(err, null);
@@ -227,14 +226,14 @@ app.get("/getModulesFullAttribute", (req, res) => {
         where: {}
     };
 
-    if (req.query.modId !== undefined) {
+    if (!_.isEmpty(req.query.modId)) {
         if (strict === "true") {
             moduleQueryOptions.where.modId = {
                 $eq: req.query.modId
             };
         } else {
             moduleQueryOptions.where.modId = {
-                $like: '%' + req.query.modId + '%'
+                $like: "%" + req.query.modId + "%"
             };
         }
     }
@@ -284,14 +283,14 @@ app.get("/getModules", (req, res) => {
         where: {}
     };
 
-    if (req.query.modId !== undefined) {
+    if (!_.isEmpty(req.query.modId)) {
         if (strict === "true") {
             moduleQueryOptions.where.modId = {
                 $eq: req.query.modId
             };
         } else {
             moduleQueryOptions.where.modId = {
-                $like: '%' + req.query.modId + '%'
+                $like: "%" + req.query.modId + "%"
             };
         }
     }
@@ -332,7 +331,7 @@ app.get("/getLatestReviewDate/:modId", (req, res) => {
 
 
 // get All Professor
-app.get("/getProfessors", (req, res) =>{
+app.get("/getProfessors", (req, res) => {
     Professor.findAll().then((rawProfessors) => {
         let professors = rawProfessors.map((rawProfessor) => {
             return rawProfessor.dataValues;
@@ -403,10 +402,10 @@ app.get("/getReviews", (req, res) => {
         where: {}
     };
 
-    if (req.query.module !== undefined) {
+    if (!_.isEmpty(req.query.module)) {
         reviewQueryOptions.where.modId = req.query.module;
     }
-    if (req.query.user !== undefined) {
+    if (!_.isEmpty(req.query.user)) {
         reviewQueryOptions.where.reviewBy = req.query.user;
     }
 
