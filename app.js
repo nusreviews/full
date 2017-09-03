@@ -99,7 +99,6 @@ const exchangeFbToken = (fbToken) => {
                     resolve(responseData);
                 });
             }
-            resolve(res);
         }).on("error", (err) => {
             reject(err);
         });
