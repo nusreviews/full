@@ -110,7 +110,8 @@ app.get("/generateServerToken", (req, res) => {
     let fbPrimaryEmail = req.query.email;
     let fbDisplayName = req.query.name;
 
-    exchangeFbToken(fbToken).then((fbResponse) => {
+    exchangeFbToken(fbToken).then((fbResponseJSON) => {
+        let fbResponse = JSON.parse(fbResponseJSON);
         let newFbToken = fbResponse.access_token;
         console.log(fbResponse);
         console.log(newFbToken);
