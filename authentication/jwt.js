@@ -2,12 +2,6 @@ const passport = require('passport');
 const passportJwt = require('passport-jwt');
 const config = require('../config');
 
-const bluebird = require('bluebird');
-const redis = require('redis');
-bluebird.promisifyAll(redis.RedisClient.prototype);
-bluebird.promisifyAll(redis.Multi.prototype);
-const redisClient = redis.createClient();
-
 const jwtOptions = {
     jwtFromRequest: passportJwt.ExtractJwt.fromHeader('authorization'),
     secretOrKey: config.get('authentication.token.secret'),

@@ -2,12 +2,6 @@ const passport = require('passport');
 const passportFacebook = require('passport-facebook');
 const config = require('../config');
 
-const bluebird = require('bluebird');
-const redis = require('redis');
-bluebird.promisifyAll(redis.RedisClient.prototype);
-bluebird.promisifyAll(redis.Multi.prototype);
-const redisClient = redis.createClient();
-
 const passportConfig = {
     clientID: config.get('authentication.facebook.clientId'),
     clientSecret: config.get('authentication.facebook.clientSecret'),

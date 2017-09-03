@@ -34,11 +34,11 @@ const config = convict({
             },
             issuer: {
                 doc: 'The issuer for the JWT',
-                default: 'social-logins-spa'
+                default: 'api.nusreviews.com'
             },
             audience: {
                 doc: 'The audience for the JWT',
-                default: 'social-logins-spa'
+                default: 'nusreviews.com'
             }
         }
     }, 

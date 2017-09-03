@@ -46,13 +46,22 @@ User.sync();
 Review.sync();
 Like.sync();
 
-const app = express();
+/************************ JWT Authentication ******************************* */
 
-app.get('/', (req, res) => {
-    res.json({
-        message: "Hello World"
-    });
-});
+const passport = require('passport');
+const passportFacebook = require('passport-facebook');
+
+const passportFacebookConfig = {
+    clientID: config.get('authentication.facebook.clientId'),
+    clientSecret: config.get('authentication.facebook.clientSecret'),
+    callbackURL: 'http://api.nusreviews.com/auth/facebook/callback'
+};
+
+passport.use(new passportFacebook.Strategy(passportConfig, (accessToken, refreshToken, profile, done) => {
+    console.log(profile);
+}));
+
+const app = express();
 
 /****************************** Module ************************************* */
 
