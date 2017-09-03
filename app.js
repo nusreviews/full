@@ -121,7 +121,9 @@ const passportJWTOptions = {
 passport.use(new passportJwt.Strategy(passportJWTOptions, function(jwtPayload, done) {
     let userPrimaryEmail = jwtPayload.sub;
     User.findOne({
-        email: userPrimaryEmail
+        where: {
+            email: userPrimaryEmail
+        }
     }).then((user) => {
         console.log(user.dataValues);
         return done(null, user);
