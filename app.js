@@ -168,7 +168,7 @@ app.get("/jwtTest", passport.authenticate(["jwt"], { session: false }), (req, re
 /******************************** User ************************************* */
 
 app.get("/profile", passport.authenticate(["jwt"], { session: false }), (req, res) => {
-    let userTokenSubject = JSON.parse(req.user);
+    let userTokenSubject = req.user;
     res.json({
         user: userTokenSubject.user
     });
