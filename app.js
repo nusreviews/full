@@ -57,7 +57,7 @@ const passportFacebookConfig = {
     callbackURL: 'http://api.nusreviews.com/auth/facebook/callback'
 };
 
-passport.use(new passportFacebook.Strategy(passportConfig, (accessToken, refreshToken, profile, done) => {
+passport.use(new passportFacebook.Strategy(passportFacebookConfig, (accessToken, refreshToken, profile, done) => {
     console.log(profile);
 }));
 
