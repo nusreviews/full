@@ -154,7 +154,6 @@ const passportJWTOptions = {
 
 passport.use(new passportJwt.Strategy(passportJWTOptions, function(jwtPayload, done) {
     let userSubjectToken = JSON.parse(jwtPayload.sub);
-    console.log(userSubjectToken);
     return done(null, userSubjectToken);
 }));
 
