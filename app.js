@@ -170,7 +170,7 @@ app.get("/jwtTest", passport.authenticate(["jwt"], { session: false }), (req, re
 app.get("/profile", passport.authenticate(["jwt"], { session: false }), (req, res) => {
     let userTokenSubject = JSON.parse(req.user);
     res.json({
-        user: userTokenSubject.user;
+        user: userTokenSubject.user
     });
 });
 
