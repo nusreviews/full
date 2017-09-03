@@ -153,7 +153,9 @@ app.get("/profile", passport.authenticate(["jwt"], { session: false }), (req, re
             userId: req.user.userId
         }
     }).then((rawUser) => {
-        res.json(rawUser.dataValues);
+        res.json({
+            user: rawUser.dataValues
+        });
     });
 });
 
