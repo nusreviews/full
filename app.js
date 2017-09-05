@@ -169,6 +169,27 @@ app.get("/profile", passport.authenticate(["jwt"], { session: false }), (req, re
     });
 });
 
+app.get("/user/:userId", (req, res) => {
+    User.findOne({
+        where: {
+            userId: req.params.userId
+        }
+    }).then((rawUser) => {
+        if (_.isEmpty(rawUser)) {
+            res.json({
+                user: null
+            });
+        } else {
+            let user = rawUser.dataValues;
+            let publicUser = _.pick(user, ["userId", "displayName"]);
+
+            res.json({
+                user: publicUser
+            });
+        }
+    });
+});
+
 
 /****************************** Module ************************************* */
 
