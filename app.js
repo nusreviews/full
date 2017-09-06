@@ -373,6 +373,7 @@ app.get("/getLatestReviewDate/:modId", (req, res) => {
     });
 });
 
+
 /****************************** Professor ************************************* */
 
 
@@ -408,14 +409,6 @@ app.get("/getProfessor/:id", (req, res) => {
 });
 
 /****************************** Review ************************************* */
-
-/*
-// get likes of a review
-app.get("/getLikes/:reviewId", (req, res) => {
-    let sql = `select count(*) as amount from user, review, liked where user.userId = liked.userId and review.reviewId = liked.reviewId and liked.reviewId = ${req.params.reviewId}`;
-    querySql(sql, (result) =>{res.send(result);});
-});
-*/
 
 const reviewDefaultLimit = 10;
 const reviewDefaultOffset = 0;
@@ -556,50 +549,44 @@ app.post("/review/new", passport.authenticate(["jwt"], { session: false }), (req
 });
 
 
-// Should be a post request
-/*
-// insert review
-app.get("/insertReview/:modId/:reviewBy/:taughtBy/:teaching/:difficulty/:enjoyability/:workload/:recommend/:comments", (req, res) =>{
-    let sql = `insert into review (modId, reviewBy, taughtBy, teaching, difficulty, enjoyability, workload, recommend, comments) 
-    values ("${req.params.modId}", ${req.params.reviewBy}, ${req.params.taughtBy}, ${req.params.teaching}, ${req.params.difficulty}, ${req.params.enjoyability}, ${req.params.workload}, ${req.params.recommend}, "${req.params.comments}")`;
-    querySql(sql, (result) =>{res.send(result);});
-});
+/******************************** Like **************************************** */
 
-/****************************** Specific function ************************************* */
-/*
-let sql_getModulesPercentage = "select numRecommend.modId, floor((numRecommend/totalReview)*100) as percentage from " + 
-                                "(select modId, count(*) as numRecommend from review where recommend = true group by modId) as numRecommend, " +
-                                "(select modId, count(*) as totalReview from review group by modId) as numReview " +
-                                "where numRecommend.modId = numReview.modId";
+app.put("/like", passport.authenticate(["jwt"], { session: false }), (req, res) => {
+    let userTokenSubject = req.user;
+    let userId = userTokenSubject.user.userId;
 
-let sql_getModulesAvgRatings = "select teachingTable.modId, totalTeaching/totalReview as avgTeaching, totalDifficulty/totalReview as avgDifficulty, totalEnjoyability/totalReview as avgEnjoyability, totalWorkload/totalReview as avgWorkload " +
-                                "from (select modId, sum(teaching) as totalTeaching, sum(difficulty) as totalDifficulty, sum(enjoyability) as totalEnjoyability, sum(workload) as totalWorkLoad from review group by modId) as teachingTable, " +
-                                "(select modId, count(*) as totalReview from review group by modId) as numReview " +
-                                "where numReview.modId = teachingTable.modId";
+    let reviewId = req.body.reviewId;
 
-let sql_getLatestModified = "SELECT modId, dateUpdated FROM review  group by modId ORDER BY dateUpdated DESC";
-
-let sql_getModuleFull = "select module.modId, name, description, percentageTable.percentage, rateTable.avgTeaching, rateTable.avgDifficulty, rateTable.avgEnjoyability, rateTable.avgWorkload, dateT.dateUpdated from module " +
-                        "left join (" + sql_getModulesPercentage + ") as percentageTable on module.modId = percentageTable.modId " +
-                        "left join (" + sql_getModulesAvgRatings + ") as rateTable on module.modId = rateTable.modId " +
-                        "left join (" + sql_getLatestModified + ") as dateT on module.modId = dateT.modId";
-
-
-
-// get all modules with full attribute
-app.get("/getModulesFullAttribute", (req, res) =>{
-    let testSql = "SELECT modId, date(dateUpdated) as test FROM review  group by modId ORDER BY dateUpdated DESC ;";
-    querySql(sql_getModuleFull, (result) =>{
-        res.send(result);
-        console.log(result);
+    Like.findOrCreate({
+        where: {
+            userId: userId,
+            reviewId: reviewId
+        }
+    }).then((rawLikes) => {
+        res.json({
+            status: "success"
+        });
     });
 });
 
+app.delete("/like", passport.authenticate(["jwt"], { session: false }), (req, res) => {
+    let userTokenSubject = req.user;
+    let userId = userTokenSubject.user.userId;
 
-app.get("/profile", passport.authenticate(["jwt"], { session: false }), (req, res) => {
-    res.json(req.user);
+    let reviewId = req.body.reviewId;
+
+    Like.destroy({
+        where: {
+            userId: userId,
+            reviewId: reviewId
+        }
+    }).then((rawLikes) => {
+        res.json({
+            status: "success"
+        });
+    });
 });
-*/
+
 const port = config.get("http.port");
 const ip = config.get("http.ip");
 
