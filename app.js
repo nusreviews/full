@@ -552,7 +552,7 @@ app.post("/review/new", passport.authenticate(["jwt"], { session: false }), (req
 
 /******************************** Like **************************************** */
 
-app.post("/like", passport.authenticate(["jwt"], { session: false }), (req, res) => {
+app.post("/like/new", passport.authenticate(["jwt"], { session: false }), (req, res) => {
     let userTokenSubject = req.user;
     let userId = userTokenSubject.user.userId;
 
