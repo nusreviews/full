@@ -552,7 +552,7 @@ app.post("/review/new", passport.authenticate(["jwt"], { session: false }), (req
 
 /******************************** Like **************************************** */
 
-app.put("/like", passport.authenticate(["jwt"], { session: false }), (req, res) => {
+app.post("/like", passport.authenticate(["jwt"], { session: false }), (req, res) => {
     let userTokenSubject = req.user;
     let userId = userTokenSubject.user.userId;
 
@@ -570,11 +570,11 @@ app.put("/like", passport.authenticate(["jwt"], { session: false }), (req, res) 
     });
 });
 
-app.delete("/like", passport.authenticate(["jwt"], { session: false }), (req, res) => {
+app.delete("/like/:reviewId", passport.authenticate(["jwt"], { session: false }), (req, res) => {
     let userTokenSubject = req.user;
     let userId = userTokenSubject.user.userId;
 
-    let reviewId = req.body.reviewId;
+    let reviewId = req.params.reviewId;
 
     Like.destroy({
         where: {
