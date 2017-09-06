@@ -479,6 +479,8 @@ app.get("/getReviews", (req, res) => {
             let relevantLikeDataByReviewId = likesByReviewId.map((likes) => {
                 let likesCount = likes.length;
                 let hasUserLike = likes.filter((like) => {
+                    console.log(like.userId);
+                    console.log(req.query.likedBy);
                     return like.userId === req.query.likedBy;
                 }).length > 0;
 
