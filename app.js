@@ -551,6 +551,44 @@ app.post("/review/new", passport.authenticate(["jwt"], { session: false }), (req
     });
 });
 
+app.post("/review/edit", passport.authenticate(["jwt"], { session: false }), (req, res) => {
+    let userTokenSubject = req.user;
+    let reviewerId = userTokenSubject.user.userId;
+
+    let modId = req.body.modId;
+    let teachingRating = req.body.teaching;
+    let difficultyRating = req.body.difficulty;
+    let enjoyabilityRating = req.body.enjoyability;
+    let workloadRating = req.body.workload;
+    let userRecommends = req.body.recommend;
+    let userComments = req.body.comments;
+
+    Review.update({
+        teachingRating: teachingRating,
+        difficultyRating: difficultyRating,
+        enjoyabilityRating: enjoyabilityRating,
+        workloadRating: workloadRating,
+        userRecommends: userRecommends,
+        userComments: userComments
+    },
+    {
+        where: {
+            modId: modId,
+            reviewBy: reviewerId
+        }
+    }).then((updateResult) => {
+        if (updateResult.affectedCount !== 1) {
+            res.json({
+                status: "error"
+            });
+        } else {
+            res.json({
+                status: "success"
+            });
+        }
+    });
+});
+
 
 /******************************** Like **************************************** */
 
