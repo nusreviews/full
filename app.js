@@ -184,7 +184,7 @@ app.get("/user/:userId", (req, res) => {
             });
         } else {
             let user = rawUser.dataValues;
-            let publicUser = _.pick(user, ["userId", "displayName"]);
+            let publicUser = _.pick(user, ["userId", "displayName", "fid"]);
 
             res.json({
                 user: publicUser
