@@ -112,7 +112,11 @@ app.get("/generateServerToken", (req, res) => {
     let fbToken = req.query.fbToken;
     let fbDisplayName = req.query.name;
     let fbId = req.query.fid;
-    let fbPrimaryEmail = req.query.email || (fbId + "@nusreviews.com");
+    let fbPrimaryEmail = req.query.email;
+
+    if (_.isEmpty(fbPrimaryEmail)) {
+        fbPrimaryEmail = fbId + "@nusreviews.com";
+    }
 
     exchangeFbToken(fbToken).then((fbResponseJSON) => {
         let fbResponse = JSON.parse(fbResponseJSON);
