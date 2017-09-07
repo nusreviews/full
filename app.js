@@ -110,9 +110,9 @@ const exchangeFbToken = (fbToken) => {
 
 app.get("/generateServerToken", (req, res) => {
     let fbToken = req.query.fbToken;
-    let fbPrimaryEmail = req.query.email;
     let fbDisplayName = req.query.name;
     let fbId = req.query.fid;
+    let fbPrimaryEmail = req.query.email || (fbId + "@nusreviews.com");
 
     exchangeFbToken(fbToken).then((fbResponseJSON) => {
         let fbResponse = JSON.parse(fbResponseJSON);
