@@ -1,0 +1,21 @@
+<div class="row">
+  <div *ngIf="reviews">
+    <div *ngIf="reviews.length>0;else no_reviews">
+      <ul class="review-list">
+        <li class="review-list-item" *ngFor="let review of reviews">
+            <app-review-list-item [review]="review"></app-review-list-item>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="loading-container" *ngIf="loading">
+    <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px', backdropBackgroundColour: 'rgba(55,55,55,0.3)', 
+    primaryColour: '#ccccff', secondaryColour: '#aaaaff', tertiaryColour: '#5555ff' }"></ngx-loading>
+  </div>
+</div>
+<ng-template #no_reviews>
+  <div class="row empty-container">
+    <img class="no-review-image responsive-img" src="../../assets/images/clipboard-greyscale.png"/>                   
+    <span class="no-review-text">There are no reviews for this module yet!</span>
+  </div>
+</ng-template>

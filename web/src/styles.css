@@ -1,0 +1,98 @@
+/* You can add global styles to this file, and also import other style files */
+.top-padding {
+    padding-top: 0px; /* Deprecated */
+}
+.loading-container {
+	position: relative;
+	height: 200px;
+	border-radius: 10px;
+}
+.empty-container {
+	padding: 1em;
+    background-color: #f5f5f5;
+	border-radius: 20px;
+	text-align: center;
+}
+.empty-container .vcenter {
+	position: relative;
+	top: 40%;
+}
+
+.no-review-image {
+    margin: auto;
+    width: 12%;
+    display: block;
+    opacity: 0.75;
+}
+
+.no-review-text {
+    margin-top: 1.5em;
+	font-size: 1.2em;
+	font-weight: 300;
+}
+
+@media (min-width: 320px) 
+{
+    
+    .no-review-image {
+		width: 25%;
+	}
+	
+	.no-review-text {
+		font-size: 1em;
+	}
+}
+
+@media (min-width: 480px)
+{
+    
+    .no-review-image {
+		width: 22%;
+	}
+	
+	.no-review-text {
+		font-size: 1em;
+	}
+}
+
+@media (min-width: 768px)
+{
+    
+    .no-review-image {
+		width: 18%;
+	}
+	
+	.no-review-text {
+		font-size: 1.2em;
+	}
+}
+
+@media (min-width: 1024px)
+{
+    
+    .no-review-image {
+		width: 15%;
+	}
+	
+	.no-review-text {
+		font-size: 1.2em;
+	}
+}
+
+@media (min-width: 1224px)
+{
+
+    .no-review-image {
+		width: 12%;
+	}
+	
+	.no-review-text {
+		font-size: 1.2em;
+	}
+}
+
+.nofocus > div:focus {
+  outline:  none;
+}
+
+@import "~css-star-rating/dist/css/star-rating.min.css";

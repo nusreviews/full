@@ -1,0 +1,56 @@
+.card-action {
+  border: 0;
+  display: flex;
+  flex-flow: row-reverse;
+  padding: 0;
+}
+
+.card-title {
+  padding: 12px;
+  font-size: 0.85em;
+}
+
+.row .col.s5 {
+  margin-left: 0;
+}
+
+.row .col{
+  padding: 0;
+}
+
+.star-row-container {
+  text-align: center;
+}
+
+.button-margin-left-right {
+  margin: 0px 10px 0px 10px;
+}
+
+.btn-inactive {
+  background: grey;
+}
+
+.recommend-header {
+  font-size: 1.25em;
+  font-weight: 400;
+}
+
+.comments-input-label {
+  font-size: 1.25em;
+}
+
+.rating-label {
+  font-size: 1.25em;
+  margin: 0;
+  font-weight: 400;
+}
+
+.loading-container-review {
+  position: absolute;
+  height: 730px;
+  border-radius: 10px;
+  z-index: 10;
+  background-color: black;
+  width: 70%;
+  opacity: 0.5;
+}

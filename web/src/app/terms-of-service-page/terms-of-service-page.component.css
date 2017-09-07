@@ -1,0 +1,16 @@
+.header {
+    color: #000000;
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: 600;
+    margin-bottom: .75em;
+}
+
+.text {
+    font-size: 1.25em;
+}
+
+.sub-header {
+    font-size: 1.75em;
+    font-weight: 500;
+}

@@ -1,0 +1,63 @@
+<head>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<div id="{{'review' + review.id}}" class="row">
+    <div [ngClass]="review.isRecommend === true ?'card green lighten-5':'card red lighten-5'">
+        <div class="card-content">
+            <div *ngIf="!showModName;else show_modName">
+                <div class="card-title author-label flow-text">
+                    <a [routerLink]="['/user/' + review.userId]">{{review.author}}</a>
+                    <span [ngClass]="review.isRecommend === true ?'recommend-text':'not-recommend-text'">{{review.isRecommend === true ? "recommends" : "does not recommend"}}</span>
+                    this module
+                </div>
+            </div>
+            <div class="ratings-container">
+                <div class="row card-content-item">
+                    <div class="col s12 l6">
+                        <span class="rating-label flow-text col s6">Teaching Team</span>
+                        <star-rating-comp class="col s4 star-rating-container nofocus" [readOnly]="true" [(rating)]="review.teachingTeamRating" [starType]="'svg'" [staticColor]="'ok'"></star-rating-comp>
+                    </div>
+
+                    <div class="col s12 l6">
+                    <span class="rating-label flow-text col s6">Difficulty</span>
+                        <star-rating-comp class="col s4 star-rating-container nofocus" [readOnly]="true" [(rating)]="review.difficultyRating" [starType]="'svg'" [staticColor]="'ok'"></star-rating-comp>
+                    </div>  
+
+                    <div class="col s12 l6">
+                        <span class="rating-label flow-text col s6">Enjoyability</span>
+                        <star-rating-comp class="col s4 star-rating-container nofocus" [readOnly]="true" [(rating)]="review.enjoyabilityRating" [starType]="'svg'" [staticColor]="'ok'"></star-rating-comp>
+                    </div>
+
+                    <div class="col s12 l6">
+                        <span class="rating-label flow-text col s6">Workload</span>
+                        <star-rating-comp class="col s4 star-rating-container nofocus" [readOnly]="true" [(rating)]="review.workloadRating" [starType]="'svg'" [staticColor]="'ok'"></star-rating-comp>
+                    </div>       
+                </div>
+            </div>
+            <div class="comments-container">
+                <span class="comments-text flow-text">{{review.comments}}</span>
+            </div>
+            <div class="date-container">
+                <span class="date-label">Last updated {{review.dateLastEdited | amLocal | amTimeAgo}}</span>
+            </div>
+            
+        </div> 
+        <div class="card-action">
+            <div class="row" style="margin-bottom: 0em">
+                <a class="col s6 l3 action-label" style="margin-right: 0em"><like-button [review]="review"></like-button></a>
+                <a class="col s6 l2 waves-effect btn-flat center-align" style="margin-right: 0em" (click)="share(review.id)">
+                    <span class="blue-text lighten-1 share-button-label">Share</span>
+                </a>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<ng-template #show_modName>
+    <div class="card-title author-label flow-text">
+        {{review.author}} 
+        <span [ngClass]="review.isRecommend === true ?'recommend-text':'not-recommend-text'">{{review.isRecommend === true ? "recommends" : "does not recommend"}}</span>
+        <a routerLink='/moduledetail/{{review.moduleId}}' fragment="{{'review' + review.id}}">{{review.moduleId}}</a>
+    </div>
+</ng-template>

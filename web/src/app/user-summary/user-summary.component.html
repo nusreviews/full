@@ -1,0 +1,54 @@
+<div *ngIf="user;else no_such_user">
+
+  <!-- cover Photo -->
+  <img class="cover-photo responsive-img" src="../../assets/images/abstract-bg-2.jpg">
+  
+  <!-- content -->
+  <div class='container'>
+    
+    <!-- Profile Related -->
+    <div class="row profile-container">
+      <div class="row center-align">
+        <img class="z-depth-3 profile-photo thumbnail" [src]="'https://graph.facebook.com/' + user.fid + '/picture?type=large'">
+      </div>
+      <h3 class="row center-align flow-text username-text">
+        {{user.username}}
+      </h3>
+    </div>
+    
+    <!-- Review List -->
+    <div class="row review-list-container">
+      <ul class="modules">
+        <label class="row left-align section-header">
+          REVIEWS WRITTEN
+        </label>
+        <div *ngIf="(reviews && reviews.length>0);else no_reviews">
+          <div infiniteScroll
+          [infiniteScrollDistance]="3"
+          [infiniteScrollThrottle]="300"
+          (scrolled)="onScroll()">
+            <li *ngFor="let review of reviews">
+              <app-review-list-item [review]="review" [showModName]="true"></app-review-list-item>
+            </li>
+          </div>
+        </div>
+        <div class="loading-container" *ngIf="loading">
+          <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px', backdropBackgroundColour: 'rgba(55,55,55,0.3)', 
+        primaryColour: '#ccccff', secondaryColour: '#aaaaff', tertiaryColour: '#5555ff' }"></ngx-loading>
+        </div> 
+      </ul>
+    </div>
+  </div>
+</div>
+
+<ng-template #no_such_user>
+  <div class="row empty-container"> 
+    <span class="flow-text no-review-text">There is no such user!</span>
+  </div>
+</ng-template>
+<ng-template #no_reviews>
+  <div class="row empty-container">
+    <img class="no-review-image responsive-img" src="../../assets/images/clipboard-greyscale.png"/>                   
+    <span class="no-review-text">This user has no reviews yet!</span>
+  </div>
+</ng-template>

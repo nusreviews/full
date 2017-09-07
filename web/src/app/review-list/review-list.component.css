@@ -1,0 +1,13 @@
+.review-list {
+    list-style: none;
+}
+
+.review-list-item {
+    margin: 1.25em;
+}
+
+.empty-container {
+    margin: 1.5em 1em 1.5em 1em;
+}
+
+

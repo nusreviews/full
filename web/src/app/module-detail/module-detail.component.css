@@ -1,0 +1,73 @@
+
+.module-code {
+    color: #000000;
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: 600;
+}
+
+.module-name {
+    color: #000000;
+    text-align: center;
+    font-size: 2.2em;
+}
+
+.verdict-container {
+    text-align: center;
+    height: 100%;
+    margin: auto;
+    margin-top: 2em;
+    margin-bottom: 1em;
+}
+
+.verdict-label {
+    margin: auto;
+    text-align: center;
+    display: inline-block;
+    font-size: 2.5em;
+    padding: 0em .25em 0em .25em;
+}
+
+.verdict-image {
+    display: inline-block;
+    height: 2.5em;
+}
+
+.thumbs-up-image {
+    content: url("../../assets/images/thumbs-up.png");
+}
+
+.thumbs-down-image {
+    content: url("../../assets/images/thumbs-down.png");
+}
+
+.ratings-container {
+    padding-bottom: 1em;
+}
+
+.ratings-label {
+    font-size: 1.25em;
+}
+
+.divider {
+    margin-top: 2em;
+    margin-bottom: 2em;
+    display: block;
+    height: 1px;
+    width: 100%;
+    background-color: #2d2a2b;
+}
+
+.module-detail-section-header {
+    font-size: 1.5em;
+    color: #7D7D7D;
+}
+
+.description-text {
+    font-size: 1.25em;
+}
+
+.no-reviews-label {
+    font-size: 1.5em;
+    font-style: italic;
+}

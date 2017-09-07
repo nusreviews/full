@@ -1,0 +1,47 @@
+<head>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<div class="container">
+  <div class="row">
+    <form class="card grey lighten-5">
+      <div class="input-field">
+        <input id="searchbar" name="searchbar" #search type="search" (keyup.enter)="submit(search.value); search.blur();" [(ngModel)]="searchItem" required placeholder="Search module code here (Eg. CS2100)" (input)="onInputChange(search.value)">
+        <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+        <!-- <i *ngIf="canSearch" class="material-icons" style="padding-top:0.25em" (click)="submit(search.value)">send</i> -->
+        <i class="material-icons" style="padding-top:0.25em" (click)="clearSearch()">close</i>
+        <div *ngIf="searchItem.length > 0" class="row search-info-container">
+          <span class="flow-text search-info-label">Showing results for '{{searchItem}}'</span>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="row">
+    <div *ngIf="modules;">
+      <div *ngIf="modules.length>0;else no_modules">
+        <div infiniteScroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="300"
+        (scrolled)="onScroll()">
+        <ul class="modules">
+          <li *ngFor="let module of modules" (click)="onSelect(module)" class="fit-height hvr-grow">
+            <app-module-card [module]="module"></app-module-card>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="loading" class="loading-container">
+    <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px', backdropBackgroundColour: 'rgba(55,55,55,0.3)', 
+    primaryColour: '#ccccff', secondaryColour: '#aaaaff', tertiaryColour: '#5555ff' }"></ngx-loading>
+  </div>
+</div>
+</div>
+<ng-template #no_modules>
+  <!-- <div class="empty-container">
+    <span class="vcenter"><strong>There are no such modules</strong></span>
+  </div> -->
+  <div class="row empty-container">
+    <img class="no-module-image responsive-img" src="../../assets/images/books-greyscale.png"/>                   
+    <span class="no-module-text">No modules found.</span>
+  </div>
+</ng-template>

@@ -1,0 +1,17 @@
+.padded {
+    padding: 2em 0em 2.5em 0em;
+    margin: auto;
+}
+
+.credits-header {
+    color: #000000;
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: 600;
+    margin-bottom: .75em;
+}
+
+.credits-text {
+    text-align: center;
+    font-size: 1.25em;
+}

@@ -1,0 +1,64 @@
+<head><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"></head>
+
+<nav>
+  <div class="nav-wrapper yellow darken-2">
+    <img class="logo-image responsive-img" src="../../assets/images/nusreviews_logo.png" (click)="redirectHome()">          
+    <h1 class="flow-text brand-logo header-label" (click)="redirectHome()">NUSReviews</h1>
+    <a data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+    
+    <!-- Desktop Bar -->
+    <ul class="right hide-on-med-and-down desktop-bar">
+      <div *ngIf="isLoggedIn; else login_block_desktop">
+        <li>
+          <a (click)="onProfileClick()">
+            <div>
+              <img class="fb-profile-img responsive-img" [src]="getProfilePicture()">
+              <span class="fb-name">{{username}}</span>
+            </div>
+          </a>
+        </li>
+        <li><a routerLink="/dashboard">Modules</a></li>
+        <li><a style="font-weight: 600" (click)="onLogoutClick()">Logout</a></li>
+      </div>
+    </ul>
+    
+    
+    <!-- Mobile Bar -->
+    <ul class="side-nav mobile-bar" id="mobile-demo">
+      <div *ngIf="isLoggedIn; else login_block_mobile">
+        <li>
+          <a (click)="onProfileClick()">
+            <div>
+              <img class="fb-profile-img responsive-img" [src]="getProfilePicture()">
+              <span class="fb-name">Welcome, {{username}}!</span>
+            </div>
+          </a>
+          <div class="divider"></div>
+        </li>
+        <li><a routerLink="/dashboard">Modules</a></li> 
+        <li><a routerLink="/about">About</a></li> 
+        <li><a routerLink="/tos">Terms</a></li> 
+        <li><a routerLink="/privacy">Privacy</a></li> 
+        <li><a routerLink="/credit">Credits</a></li>   
+        <li><a style="font-weight: 600" (click)="onLogoutClick()">Logout</a></li>
+      </div>
+    </ul>
+  </div>
+</nav>
+
+<router-outlet></router-outlet>
+
+<!-- Pre-login  -->
+<ng-template #login_block_desktop>
+  <li ><a style="font-weight: 600" (click)="onLoginClick()">Login</a></li>
+  <li><a routerLink="/dashboard">Modules</a></li>
+</ng-template>
+
+<ng-template #login_block_mobile>
+    <li ><a style="font-weight: 600" (click)="onLoginClick()">Login</a></li>
+    <li><a routerLink="/dashboard">Modules</a></li> 
+    <li><a routerLink="/about">About</a></li> 
+    <li><a routerLink="/tos">Terms</a></li> 
+    <li><a routerLink="/privacy">Privacy</a></li> 
+    <li><a routerLink="/credit">Credits</a></li> 
+  </ng-template>

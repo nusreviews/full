@@ -1,0 +1,59 @@
+<div *ngIf="module">
+  
+  <div class="module-card card grey lighten-3">
+    <div class="row valign-wrapper module-content-container">
+      <div class="col s5 l5 module-info-container">
+        <div class="row">
+          <h5 class="module-code-label">{{module.id}}</h5>
+        </div>
+        <div class="row">
+          <span class="module-name-label">{{module.modName}}</span>
+        </div>
+      </div>
+      
+      <div class="col s3 l3">
+        <div class="row">
+          <span class="last-review-label">Last Reviewed</span>
+        </div>
+        <div class="row">
+          <span class="date-label">{{module.lastReviewed == null ? '-' : (module.lastReviewed | amLocal | amTimeAgo) }}</span>
+        </div>
+      </div>
+      
+      <div class="col s0 l2"></div>     
+      
+      <div class="col s4 l2 card hvr-fade verdict-container" (mouseover)='over()' (mouseleave)='leave()' [ngClass]="module.percentageRecommend == null ? 'blue-grey' : module.percentageRecommend < 25 ? 'red darken-1' : module.percentageRecommend < 50 ? 'deep-orange darken-1' : module.percentageRecommend < 75 ? 'yellow darken-2' : 'green'">
+        <div class="row">
+          <span class="flow-text verdict-label">{{module.percentageRecommend == null ? 'N/A' : (module.percentageRecommend | roundWhole) + '%' }}</span>
+        </div>
+        <div class="row">
+          <span class="recommend-label">{{module.percentageRecommend == null ? 'No Reviews Yet' : 'Recommended'}}</span>
+        </div>
+        <div class="row" style="text-align: right">
+            <span class="flow-text more-label">+</span>
+          </div>
+      </div>
+    </div>
+  </div>
+  
+  <div *ngIf="shouldShowRatingsBar" [@enterAnimation] class="row card grey lighten-3 module-ratings-container">
+    <div class="row">
+      <div class="col m3 s6">
+        <star-rating-comp class="row star-rating-container nofocus" [readOnly]="true" [(rating)]="module.teachingRating" [size]="'tiny'" [starType]="'svg'" [staticColor]="'ok'"></star-rating-comp>
+        <div class="row flow-text ratings-label ">Teaching</div>
+      </div>
+      <div class="col m3 s6">
+        <star-rating-comp class="row star-rating-container nofocus" [readOnly]="true" [(rating)]="module.difficultyRating" [size]="'tiny'" [starType]="'svg'" [staticColor]="'ok'"></star-rating-comp>
+        <div class="row flow-text ratings-label ">Difficulty</div>
+      </div>
+      <div class="col m3 s6">
+        <star-rating-comp class="row star-rating-container nofocus" [readOnly]="true" [(rating)]="module.enjoyabilityRating" [size]="'tiny'" [starType]="'svg'" [staticColor]="'ok'"></star-rating-comp>
+        <div class="row flow-text ratings-label ">Enjoyability</div>
+      </div>
+      <div class="col m3 s6">
+        <star-rating-comp class="row star-rating-container nofocus" [readOnly]="true" [(rating)]="module.workloadRating" [size]="'tiny'" [starType]="'svg'" [staticColor]="'ok'"></star-rating-comp>
+        <div class="row flow-text ratings-label ">Workload</div>
+      </div>
+    </div>
+  </div>
+</div>

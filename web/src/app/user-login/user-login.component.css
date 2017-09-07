@@ -1,0 +1,29 @@
+#fb-login {
+  padding: 0 15px;
+}
+
+#fb-login:hover {
+  background: rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+#fb-login-content {
+  align-items: center;
+  display: flex;
+}
+
+.fb-profile-image {
+  border-radius: 50%;
+  height: 40px;
+  margin-right: 10px;
+  width: 40px;
+}
+
+.fb-content {
+  padding: 0px 20px 0px 5px;
+}
+
+.fb-content:hover {
+  background: rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}

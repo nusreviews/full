@@ -1,0 +1,57 @@
+:host {
+    flex:  0 0 auto;
+}
+
+.header-label {
+    cursor: pointer;
+    margin: .5em;
+    margin-left: 1em;
+    
+}
+
+.logo-image {
+    cursor: pointer;
+    height: 3em;
+    margin: .5em;
+    margin-left: 2em;
+}
+
+.mobile-bar {
+    width: inherit;
+}
+
+.desktop-bar {
+    margin-right: 2em;
+}
+
+.fb-profile-img {
+    border-radius: 50%;
+    height: 2.5em;
+    margin-right: 10px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+
+.fb-name {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.button-collapse {
+    cursor: pointer;
+}
+
+@media (max-width: 390px) 
+{
+	.logo-image {
+        height: 2.6em;
+    }
+
+    .header-label {
+        font-size: 1.6em;
+        margin-top: .75em;
+        margin-left: 1.7em;
+    }
+}
+

@@ -1,0 +1,50 @@
+<div class="container">
+    <div *ngIf="module">
+        <h2 class="flow-text module-code">{{module.id}}</h2>
+        <h2 class="flow-text module-name">{{module.modName}}</h2>
+        <div class="row verdict-container center-align">
+            <div *ngIf="module.percentageRecommend">
+                <h3 class=" verdict-label" [ngClass]="module.getRoundedPercentage() < 50 ? 'red-text' : 'green-text'">{{module.percentageRecommend | roundWhole}}%</h3>
+                <img class="verdict-image responsive-img" [ngClass]="module.getRoundedPercentage() < 50 ? 'thumbs-down-image' : 'thumbs-up-image'">          
+            </div>
+            <span *ngIf="module.percentageRecommend == null" class="flow-text no-reviews-label">No Reviews Yet</span>
+        </div>
+        
+        <div class="row ratings-container center-align" style="text-align:center">
+            <div class="col s12 m6 l3">
+                <star-rating-comp class="row star-rating-container nofocus" [readOnly]="true" [(rating)]="module.teachingRating" [size]="'large'" [starType]="'svg'" [staticColor]="'ok'"></star-rating-comp>
+                <div class="row flow-text ratings-label ">Teaching Staff</div>
+            </div>
+            <div class="col s12 m6 l3">
+                <star-rating-comp class="row star-rating-container nofocus" [readOnly]="true" [(rating)]="module.difficultyRating" [size]="'large'" [starType]="'svg'" [staticColor]="'ok'"></star-rating-comp>
+                <div class="row flow-text ratings-label">Difficulty</div>
+            </div>
+            <div class="col s12 m6 l3">
+                <star-rating-comp class="row star-rating-container nofocus" [readOnly]="true" [(rating)]="module.enjoyabilityRating" [size]="'large'" [starType]="'svg'" [staticColor]="'ok'"></star-rating-comp>
+                <div class="row flow-text ratings-label ">Enjoyability</div>
+            </div>
+            <div class="col s12 m6 l3">
+                <star-rating-comp class="row star-rating-container nofocus" [readOnly]="true" [(rating)]="module.workloadRating" [size]="'large'" [starType]="'svg'" [staticColor]="'ok'"></star-rating-comp>
+                <div class="row flow-text ratings-label ">Workload</div>
+            </div>
+        </div>
+        
+        <div class="divider"></div>
+        <label class="module-detail-section-header">MODULE INFO</label>
+        <p class="flow-text description-text">{{module.description}}</p>
+        
+        <div class="divider"></div>
+        <label class="module-detail-section-header">WRITE A REVIEW</label>
+        <module-review-form [module]="module" [userReview]="userReview"></module-review-form>
+        
+        <div class="divider"></div>
+        <label class="module-detail-section-header">WHAT STUDENTS SAY</label>
+        <div infiniteScroll
+        [infiniteScrollDistance]="3"
+        [infiniteScrollThrottle]="300"
+        (scrolled)="onScroll()">
+            <app-review-list [reviews]="reviews" [loading]="loading"></app-review-list>
+        </div>
+    </div>
+</div>
+
