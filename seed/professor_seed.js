@@ -1,4 +1,5 @@
 const professorSeed = [
+    /*
     {
         firstName: "Steven",
         lastName: "Halim"
@@ -19,6 +20,7 @@ const professorSeed = [
         firstName: "Kok Lim",
         lastName: "Low"
     }
+    */
 ];
 
 module.exports = professorSeed;

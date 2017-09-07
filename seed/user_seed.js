@@ -1,4 +1,5 @@
 const userSeed = [
+    /*
     {
         displayName: "Lim Ta Eu",
         email: "limtaeu@nusreviews.com"
@@ -15,6 +16,7 @@ const userSeed = [
         displayName: "Curtis Tan",
         email: "curtistan@nusreviews.com"
     }
+    */
 ];
 
 module.exports = userSeed;
