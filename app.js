@@ -531,7 +531,7 @@ app.post("/review/new", passport.authenticate(["jwt"], { session: false }), (req
 
     if (invalidNumericalRatings.length > 0) {
         res.json({
-            status: "error";
+            status: "error"
         });
     }
 
@@ -587,7 +587,7 @@ app.post("/review/edit", passport.authenticate(["jwt"], { session: false }), (re
 
     if (invalidNumericalRatings.length > 0) {
         res.json({
-            status: "error";
+            status: "error"
         });
     }
 
