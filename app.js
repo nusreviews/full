@@ -114,6 +114,7 @@ app.get("/generateServerToken", (req, res) => {
     let fbId = req.query.fid;
     let fbPrimaryEmail = req.query.email;
 
+    console.log(_.isEmpty(fbPrimaryEmail));
     if (_.isEmpty(fbPrimaryEmail)) {
         fbPrimaryEmail = fbId + "@nusreviews.com";
     }
