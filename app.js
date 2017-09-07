@@ -577,6 +577,8 @@ app.post("/review/edit", passport.authenticate(["jwt"], { session: false }), (re
             reviewBy: reviewerId
         }
     }).then((updateResult) => {
+        console.log(updateResult);
+        console.log(updateResult.affectedCount);
         if (updateResult.affectedCount !== 1) {
             res.json({
                 status: "error"
