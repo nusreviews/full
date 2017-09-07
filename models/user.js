@@ -15,6 +15,10 @@ const User = db.sequelize.define("user", {
     type: db.Sequelize.STRING(255),
     allowNull: false,
     unique: true
+  },
+  fid: {
+    type:db.Sequelize.STRING(255),
+    unique: true
   }
 });
 

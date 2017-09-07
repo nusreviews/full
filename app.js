@@ -112,6 +112,7 @@ app.get("/generateServerToken", (req, res) => {
     let fbToken = req.query.fbToken;
     let fbPrimaryEmail = req.query.email;
     let fbDisplayName = req.query.name;
+    let fbId = req.query.fid;
 
     exchangeFbToken(fbToken).then((fbResponseJSON) => {
         let fbResponse = JSON.parse(fbResponseJSON);
@@ -119,7 +120,8 @@ app.get("/generateServerToken", (req, res) => {
 
         User.findOrCreate({
             where: {
-                email: fbPrimaryEmail
+                email: fbPrimaryEmail,
+                fid: fbId
             },
             defaults: {
                 displayName: fbDisplayName
