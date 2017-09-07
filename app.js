@@ -120,11 +120,11 @@ app.get("/generateServerToken", (req, res) => {
 
         User.findOrCreate({
             where: {
-                email: fbPrimaryEmail,
                 fid: fbId
             },
             defaults: {
-                displayName: fbDisplayName
+                displayName: fbDisplayName,
+                email: fbPrimaryEmail
             }
         }).then((sequelizeResponse) => {
             let user = sequelizeResponse[0].dataValues;
