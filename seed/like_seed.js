@@ -1,4 +1,5 @@
 const likeSeed = [
+    /*
     {
         reviewId: 1,
         userId: 1
@@ -11,6 +12,7 @@ const likeSeed = [
         reviewId: 1,
         userId: 3
     }
+    */
 ];
 
 module.exports = likeSeed;

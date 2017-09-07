@@ -1,4 +1,5 @@
 const reviewSeed = [
+    /*
     {
         modId: "CS1010",
         reviewBy: 2,
@@ -108,6 +109,7 @@ const reviewSeed = [
         recommend: true,
         comments: "hi 3"
     }
+    */
 ];
 
 module.exports = reviewSeed;
