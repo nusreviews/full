@@ -148,7 +148,7 @@ app.get("/generateServerToken", (req, res) => {
 app.post("/deauthorize/callback", (req, res) => {
     // Nothing to do
     res.json({
-        status: "success";
+        status: "success"
     });
 });
 
