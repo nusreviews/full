@@ -533,6 +533,7 @@ app.post("/review/new", passport.authenticate(["jwt"], { session: false }), (req
         res.json({
             status: "error"
         });
+        return;
     }
 
     Review.findAll({
@@ -589,6 +590,7 @@ app.post("/review/edit", passport.authenticate(["jwt"], { session: false }), (re
         res.json({
             status: "error"
         });
+        return;
     }
 
     Review.update({
