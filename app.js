@@ -564,12 +564,12 @@ app.post("/review/edit", passport.authenticate(["jwt"], { session: false }), (re
     let userComments = req.body.comments;
 
     Review.update({
-        teachingRating: teachingRating,
-        difficultyRating: difficultyRating,
-        enjoyabilityRating: enjoyabilityRating,
-        workloadRating: workloadRating,
-        userRecommends: userRecommends,
-        userComments: userComments
+        teaching: teachingRating,
+        difficulty: difficultyRating,
+        enjoyability: enjoyabilityRating,
+        workload: workloadRating,
+        recommend: userRecommends,
+        comments: userComments
     },
     {
         where: {
