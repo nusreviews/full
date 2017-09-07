@@ -521,6 +521,21 @@ app.post("/review/new", passport.authenticate(["jwt"], { session: false }), (req
     let userRecommends = req.body.recommend;
     let userComments = req.body.comments;
 
+    let numericalRatings = [
+        teachingRating, difficultyRating, enjoyabilityRating, workloadRating
+    ];
+
+    let invalidNumericalRatings = numericalRatings.filter((numericalRating) => {
+        return (Math.round(numericalRating) !== numericalRating) || numericalRating < 1 || numericalRating > 5;
+    });
+
+    if (invalidNumericalRatings.length > 0) {
+        res.json({
+            status: "error"
+        });
+        return;
+    }
+
     Review.findAll({
         where: {
             modId: modId,
@@ -562,6 +577,21 @@ app.post("/review/edit", passport.authenticate(["jwt"], { session: false }), (re
     let workloadRating = req.body.workload;
     let userRecommends = req.body.recommend;
     let userComments = req.body.comments;
+
+    let numericalRatings = [
+        teachingRating, difficultyRating, enjoyabilityRating, workloadRating
+    ];
+
+    let invalidNumericalRatings = numericalRatings.filter((numericalRating) => {
+        return (Math.round(numericalRating) !== numericalRating) || numericalRating < 1 || numericalRating > 5;
+    });
+
+    if (invalidNumericalRatings.length > 0) {
+        res.json({
+            status: "error"
+        });
+        return;
+    }
 
     Review.update({
         teaching: teachingRating,
