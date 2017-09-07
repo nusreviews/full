@@ -110,9 +110,13 @@ const exchangeFbToken = (fbToken) => {
 
 app.get("/generateServerToken", (req, res) => {
     let fbToken = req.query.fbToken;
-    let fbPrimaryEmail = req.query.email;
     let fbDisplayName = req.query.name;
     let fbId = req.query.fid;
+    let fbPrimaryEmail = req.query.email;
+
+    if (fbPrimaryEmail === "undefined") {
+        fbPrimaryEmail = fbId + "@nusreviews.com";
+    }
 
     exchangeFbToken(fbToken).then((fbResponseJSON) => {
         let fbResponse = JSON.parse(fbResponseJSON);
@@ -120,11 +124,11 @@ app.get("/generateServerToken", (req, res) => {
 
         User.findOrCreate({
             where: {
-                email: fbPrimaryEmail,
                 fid: fbId
             },
             defaults: {
-                displayName: fbDisplayName
+                displayName: fbDisplayName,
+                email: fbPrimaryEmail
             }
         }).then((sequelizeResponse) => {
             let user = sequelizeResponse[0].dataValues;
@@ -142,6 +146,13 @@ app.get("/generateServerToken", (req, res) => {
         res.json({
             token: null
         });
+    });
+});
+
+app.post("/deauthorize/callback", (req, res) => {
+    // Nothing to do
+    res.json({
+        status: "success"
     });
 });
 
@@ -664,32 +675,6 @@ const ip = config.get("http.ip");
 app.listen("3000", "127.0.0.1", () => {
     console.log("Server started on port 3000");
 });
-
-/*
-app.use(passport.initialize());
-
-app.get("/auth/facebook", 
-    passport.authenticate("facebook", { session: false }));
-
-app.get("/auth/facebook/callback", 
-    passport.authenticate("facebook", { session: false }), generateUserToken);
-*/
-
-
-/*
-const generateUserToken = (req, res) => {
-    const accessToken = token.generateAccessToken(req.user.id);
-    res.json({
-        token: accessToken
-    });
-}
-*/
-
-/*
-app.get("/profile", passport.authenticate(["jwt"], { session: false }), (req, res) => {
-    res.json(req.user);
-});
-*/
 
 
 
