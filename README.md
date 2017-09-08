@@ -27,8 +27,7 @@ Do get in touch with us if you have suggestions @ [nusreviews@gmail.com](nusrevi
 - NodeJS 8.x and above
 - MySQL
 
-#### Setup
-##### Frontend
+#### Frontend Setup
 Pull the frontend repository @ [https://github.com/nusreviews/web](https://github.com/nusreviews/web)
 
 Run `npm install`
@@ -37,7 +36,7 @@ Install the Angular CLI globally with `npm install -g @angular/cli`
 
 Run the local development server with `ng serve`
 
-##### Backend
+#### Backend Setup
 Pull the backend repository @ [https://github.com/nusreviews/backend](https://github.com/nusreviews/backend)
 
 Set up Environment variables (if required) matching environment variable names in './config.js'
