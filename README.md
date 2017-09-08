@@ -8,7 +8,7 @@
 Fill stuff here
 
 #### Sam See (A0124552M)
-Fill stuff here
+Front end business logic Eg: Calling of APIs, infinite scrolling, pagination
 
 #### Curtis Tan (A0129529W)
 Fill stuff here
