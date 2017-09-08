@@ -11,7 +11,7 @@ Front end styling, UI/UX design and some business logic
 Front end business logic Eg: Calling of APIs, infinite scrolling, pagination
 
 #### Curtis Tan (A0129529W)
-Fill stuff here
+Front end styling, Login service logic, Server-side API, Server configuration
 
 #### Lim Ta Eu (A0126356E)
 Back End, express, sql
