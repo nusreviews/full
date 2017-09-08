@@ -13,7 +13,7 @@
           <a (click)="onProfileClick()">
             <div>
               <img class="fb-profile-img responsive-img" [src]="getProfilePicture()">
-              <span class="fb-name">{{username}}</span>
+              <span class="fb-name">{{getUsername()}}</span>
             </div>
           </a>
         </li>
@@ -30,7 +30,7 @@
           <a (click)="onProfileClick()">
             <div>
               <img class="fb-profile-img responsive-img" [src]="getProfilePicture()">
-              <span class="fb-name">Welcome, {{username}}!</span>
+              <span class="fb-name">Welcome, {{getUsername()}}!</span>
             </div>
           </a>
           <div class="divider"></div>

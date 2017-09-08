@@ -15,7 +15,6 @@ export class HeaderBarComponent implements OnInit {
   public appName: string = "NUS REVIEWS";
   isLoggedIn: boolean = false;
   isLoggedInSubscription: Subscription;
-  username: string;
   
   constructor(private router: Router, private loginService: LoginService,) {
     this.router = router;
@@ -23,9 +22,6 @@ export class HeaderBarComponent implements OnInit {
     this.isLoggedInSubscription = this.loginService.getLoggedInObservable().subscribe(isLoggedIn => {
       //console.log(isLoggedIn);
       this.isLoggedIn = isLoggedIn;
-      if (this.isLoggedIn) {
-        this.username = this.loginService.getProfile().facebook.name;
-      }
     });
   }
   
@@ -57,6 +53,10 @@ export class HeaderBarComponent implements OnInit {
 
   getProfilePicture() {
     return this.loginService.getProfile().facebook.picture.data.url
+  }
+
+  getUsername() {
+    return this.loginService.getProfile().facebook.name;
   }
   
 }

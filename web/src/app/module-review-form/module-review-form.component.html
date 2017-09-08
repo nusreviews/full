@@ -18,10 +18,11 @@
     <div class="row card-content-item star-row-container">
       <div class="col s12 m6">
         <div class="flow-text row rating-label">Quality of Teaching Staff</div>
+        
         <star-rating-comp class="row nofocus" (onRatingChange)="onRatingChange($event)" [size]="'large'" [starType]="'svg'" [staticColor]="'ok'" #staff_quality_rating></star-rating-comp> 
       </div>
       <div class="col s12 m6">  
-        <div class="flow-text row rating-label">Difficulty Level of Module</div>
+        <div class="flow-text row rating-label">Difficulty Level of Module <a mz-tooltip [tooltip]="'1 star: Easy   |   5 stars: Difficult'" [position]="'right'" [delay]="20">(?)</a></div>
         <star-rating-comp class="row nofocus" (onRatingChange)="onRatingChange($event)" [size]="'large'" [starType]="'svg'" [staticColor]="'ok'" #module_difficulty_rating></star-rating-comp>
       </div>
     </div>
@@ -32,7 +33,7 @@
         <star-rating-comp class="row nofocus" (onRatingChange)="onRatingChange($event)" [size]="'large'" [starType]="'svg'" [staticColor]="'ok'" #module_enjoyability_rating></star-rating-comp>
       </div>
       <div class="col s12 m6">
-        <div class="flow-text row rating-label">Workload of Module</div>
+        <div class="flow-text row rating-label">Workload of Module <a mz-tooltip [tooltip]="'1 star: Light   |   5 stars: Heavy'" [position]="'right'" [delay]="20">(?)</a></div>
         <star-rating-comp class="row nofocus" (onRatingChange)="onRatingChange($event)" [size]="'large'" [starType]="'svg'" [staticColor]="'ok'" #module_workload_rating></star-rating-comp>
       </div>
     </div>
@@ -102,7 +103,7 @@
           [staticColor]="'ok'" [rating]="userReview.teachingTeamRating" #staff_quality_rating></star-rating-comp> 
         </div>
         <div class="col s12 m6">  
-          <div class="flow-text row rating-label">Difficulty Level of Module</div>
+          <div class="flow-text row rating-label">Difficulty Level of Module <a mz-tooltip [tooltip]="'1 star: Easy   |   5 stars: Difficult'" [position]="'right'" [delay]="20">(?)</a></div>
           <star-rating-comp class="row nofocus" (onRatingChange)="onRatingChangeEdit($event)" [size]="'large'" [starType]="'svg'" 
           [staticColor]="'ok'" [rating]="userReview.difficultyRating" #module_difficulty_rating></star-rating-comp>
         </div>
@@ -115,7 +116,10 @@
           [staticColor]="'ok'" [rating]="userReview.enjoyabilityRating" #module_enjoyability_rating></star-rating-comp>
         </div>
         <div class="col s12 m6">
-          <div class="flow-text row rating-label">Workload of Module</div>
+          <div class="flow-text row rating-label">
+            Workload of Module 
+            <a mz-tooltip [tooltip]="'1 star: Light   |   5 stars: Heavy'" [position]="'right'" [delay]="20">(?)</a>
+          </div>
           <star-rating-comp class="row nofocus" (onRatingChange)="onRatingChangeEdit($event)" [size]="'large'" [starType]="'svg'" 
           [staticColor]="'ok'" [rating]="userReview.workloadRating" #module_workload_rating></star-rating-comp>
         </div>

@@ -45,6 +45,7 @@ export class ModuleDetailComponent implements OnInit {
         this.fetchUserReview(this.loginService.getProfile().nusreviews.userId);
       } else {
         this.fetchReviews(null);
+        this.userReview = null; // If log out, revert form back to "write review".
       }
     });
     // Listen for updates to review list

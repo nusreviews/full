@@ -9,11 +9,11 @@
         <label class="label-icon" for="search"><i class="material-icons">search</i></label>
         <!-- <i *ngIf="canSearch" class="material-icons" style="padding-top:0.25em" (click)="submit(search.value)">send</i> -->
         <i class="material-icons" style="padding-top:0.25em" (click)="clearSearch()">close</i>
-        <div *ngIf="searchItem.length > 0" class="row search-info-container">
-          <span class="flow-text search-info-label">Showing results for '{{searchItem}}'</span>
-        </div>
       </div>
     </form>
+  </div>
+  <div *ngIf="searchItem.length > 0" class="row search-info-container">
+    <span class="flow-text search-info-label">Showing results for '{{searchItem}}'</span>
   </div>
   <div class="row">
     <div *ngIf="modules;">
