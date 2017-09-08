@@ -4,10 +4,10 @@
 
 ### Developers
 ---
-#### Jane See (A0131003J)
-Fill stuff here
+#### See Loo Jane (A0131003J)
+Front end styling, UI/UX design and some business logic
 
-#### Sam See (A0124552M)
+#### See Soon Kiat (Sam) (A0124552M)
 Front end business logic Eg: Calling of APIs, infinite scrolling, pagination
 
 #### Curtis Tan (A0129529W)
