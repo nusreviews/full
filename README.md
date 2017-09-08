@@ -14,7 +14,7 @@ Front end business logic Eg: Calling of APIs, infinite scrolling, pagination
 Fill stuff here
 
 #### Lim Ta Eu (A0126356E)
-Fill stuff here
+Back End, express, sql
 
 ### Contact Us
 ---
